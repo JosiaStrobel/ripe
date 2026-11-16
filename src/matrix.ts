@@ -39,23 +39,73 @@ export function matrix_start(position: number, width: number): number {
 	return clamped * Math.max(1 - width, 0);
 }
 
+/** Raster steps per block width: blocks snap to multiples of width / SNAP_STEPS. */
+export const SNAP_STEPS = 5;
+
 /**
- * Lane per block so that blocks of relative `width` never overlap within a lane.
- * Greedy from left to right: each block takes the first lane that is free at its start.
- * Returns the lanes in input order.
+ * Snap a left edge to the nearest raster position (multiples of width / steps) that
+ * still fits the track. Blocks never move further sideways; occupied places go to a lane.
  */
-export function assign_lanes(starts: readonly number[], width: number): number[] {
-	const EPSILON = 1e-9;
-	const order = starts.map((start, index) => ({ start, index })).sort((a, b) => a.start - b.start);
-	const lane_ends: number[] = [];
-	const lanes = new Array<number>(starts.length).fill(0);
-	for (const { start, index } of order) {
-		let lane = lane_ends.findIndex((end) => end <= start + EPSILON);
-		if (lane === -1) lane = lane_ends.length;
-		lane_ends[lane] = start + width;
-		lanes[index] = lane;
+export function snap_start(start: number, width: number, steps: number = SNAP_STEPS): number {
+	const step = width / steps;
+	if (step <= 0) return 0;
+	const max_index = Math.floor((1 - width) / step + 1e-9);
+	const index = Math.min(Math.max(Math.round(start / step), 0), Math.max(max_index, 0));
+	return index * step;
+}
+
+/** Maximum sideways shift of a block from its ideal position, as fraction of its width. */
+export const MAX_SHIFT = 1 / 3;
+
+/** Placed block: left edge (track fraction) and lane. */
+export interface Placement {
+	start: number;
+	lane: number;
+}
+
+/**
+ * Place blocks on the raster (multiples of width / steps): each block may move up to
+ * `max_shift` × width from its ideal left edge to fit into an existing lane; the topmost
+ * lane with a free place wins, then the place closest to the ideal. Only if no lane fits,
+ * a new lane is opened at the nearest place. Blocks are placed left to right by their
+ * ideal position; the result is in input order.
+ */
+export function place_blocks(
+	ideals: readonly number[],
+	width: number,
+	steps: number = SNAP_STEPS,
+	max_shift: number = MAX_SHIFT,
+): Placement[] {
+	const step = width / steps;
+	if (step <= 0) return ideals.map(() => ({ start: 0, lane: 0 }));
+	const max_index = Math.max(Math.floor((1 - width) / step + 1e-9), 0);
+	const reach = Math.floor((max_shift * width) / step + 1e-9);
+	const lanes: number[][] = []; // occupied raster indices per lane
+	const result: Placement[] = ideals.map(() => ({ start: 0, lane: 0 }));
+	const order = ideals.map((ideal, index) => ({ ideal, index })).sort((a, b) => a.ideal - b.ideal);
+
+	for (const { ideal, index } of order) {
+		const nearest = Math.round(snap_start(ideal, width, steps) / step);
+		const candidates: number[] = [];
+		for (let k = nearest - reach - 1; k <= nearest + reach + 1; k++) {
+			if (k >= 0 && k <= max_index && Math.abs(k * step - ideal) <= max_shift * width + 1e-9) {
+				candidates.push(k);
+			}
+		}
+		candidates.sort((a, b) => Math.abs(a * step - ideal) - Math.abs(b * step - ideal));
+		const free = (lane: number[], k: number): boolean => lane.every((other) => Math.abs(other - k) >= steps);
+		let lane = lanes.findIndex((occupied) => candidates.some((k) => free(occupied, k)));
+		let k = nearest;
+		if (lane === -1) {
+			lane = lanes.length;
+			lanes.push([]);
+		} else {
+			k = candidates.find((c) => free(lanes[lane] ?? [], c)) ?? nearest;
+		}
+		lanes[lane]?.push(k);
+		result[index] = { start: k * step, lane };
 	}
-	return lanes;
+	return result;
 }
 
 /** Number of lanes used (at least 1, so empty rows keep their height). */

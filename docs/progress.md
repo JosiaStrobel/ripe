@@ -23,6 +23,7 @@ _Einzige Stelle für den Umsetzungsstand. Wird nach jeder Arbeitssitzung aktuali
 - [x] Testwerkzeug Zeitregler (2026-11-16, in Obsidian getestet): Einstellung `showTimeSlider` (Standard aus), `views/time_slider.ts`, simuliert nur die Anzeige (−14 … +30 Tage); Testaufgaben in `Todos.md` ergänzt
 - [x] Ausgeblendete Aufgaben als eingeklappter Abschnitt im Raster (2026-11-16, in Obsidian getestet): `hidden_info` in `urgency.ts`, `views/format.ts`
 - [x] Pausieren / Pause aufheben im Menü (2026-11-16, in Obsidian getestet): `modals/pause_modal.ts`, `pause_line`/`unpause_line`, mit Rückgängig
+- [x] Matrix: Blöcke auf ⅕-Raster, bis ⅓ Blockbreite Abweichung für dichtere Unterzeilen (`place_blocks`) (2026-11-16, in Obsidian getestet)
 - [ ] Weitere Anzeigeformen der Übersicht zur Auswahl (Wunsch, später)
 - [ ] Etappe 5: Logs für wiederkehrende Aufgaben (Rückgängig muss dann auch den Log-Eintrag entfernen)
 - [x] Beispielbefehl und Beispiel-Einstellung ersetzt (2026-11-16)

@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { assign_lanes, days_to_critical, lane_count, matrix_start, time_position } from './matrix';
+import {
+	days_to_critical,
+	lane_count,
+	matrix_start,
+	place_blocks,
+	snap_start,
+	time_position,
+} from './matrix';
 
 describe('days_to_critical', () => {
 	it('counts days until critical, 0 when overdue, null without window', () => {
@@ -39,20 +46,52 @@ describe('matrix_start', () => {
 	});
 });
 
-describe('assign_lanes', () => {
-	it('keeps non-overlapping blocks in one lane', () => {
-		expect(assign_lanes([0, 0.3, 0.6], 0.25)).toEqual([0, 0, 0]);
+describe('snap_start', () => {
+	it('snaps to the nearest fifth of the block width', () => {
+		// width 0.2 → step 0.04
+		expect(snap_start(0.05, 0.2)).toBeCloseTo(0.04);
+		expect(snap_start(0.07, 0.2)).toBeCloseTo(0.08);
+		expect(snap_start(0, 0.2)).toBe(0);
 	});
 
-	it('moves overlapping blocks into further lanes, in input order', () => {
-		// 0.8 and 0.8 collide, 0.1 is free
-		expect(assign_lanes([0.8, 0.1, 0.8, 0.7], 0.2)).toEqual([1, 0, 2, 0]);
+	it('stays within the track', () => {
+		expect(snap_start(0.8, 0.2)).toBeCloseTo(0.8);
+		expect(snap_start(0.79, 0.3)).toBeCloseTo(0.66); // last place: 11 steps of 0.06
 	});
 
-	it('reuses a lane once it is free again', () => {
-		expect(assign_lanes([0, 0.1, 0.25], 0.2)).toEqual([0, 1, 0]);
+});
+
+describe('place_blocks', () => {
+	// width 0.2 → raster step 0.04, max shift 0.2 / 3 ≈ 0.067
+	const place = (ideals: number[]): string =>
+		place_blocks(ideals, 0.2)
+			.map((p) => `${p.start.toFixed(2)}@${p.lane}`)
+			.join(' ');
+
+	it('snaps free blocks to their nearest place', () => {
+		expect(place([0.05, 0.51])).toBe('0.04@0 0.52@0');
 	});
 
+	it('shifts a block up to a third of its width to stay in the lane', () => {
+		// second block ideal 0.57 → nearest 0.56 is blocked (needs >= 0.60); 0.60 is 0.03 away
+		expect(place([0.4, 0.57])).toBe('0.40@0 0.60@0');
+	});
+
+	it('opens a new lane if the shift would be larger', () => {
+		// 0.44 would need 0.60 (0.16 away > 0.067)
+		expect(place([0.4, 0.44])).toBe('0.40@0 0.44@1');
+	});
+
+	it('reuses upper lanes when a place fits there', () => {
+		expect(place([0.4, 0.44, 0.62])).toBe('0.40@0 0.44@1 0.60@0');
+	});
+
+	it('keeps blocks inside the track', () => {
+		expect(place([0.8, 0.8])).toBe('0.80@0 0.80@1');
+	});
+});
+
+describe('lane_count', () => {
 	it('counts lanes, at least one', () => {
 		expect(lane_count([0, 2, 1])).toBe(3);
 		expect(lane_count([])).toBe(1);

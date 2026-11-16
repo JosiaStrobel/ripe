@@ -1,6 +1,6 @@
 import { Platform } from 'obsidian';
 import { t, type MessageKey } from '../i18n';
-import { assign_lanes, days_to_critical, lane_count, matrix_start, time_position } from '../matrix';
+import { days_to_critical, lane_count, matrix_start, place_blocks, time_position } from '../matrix';
 import type { Day } from '../parser/date';
 import type { TaskActions } from './task_actions';
 import { render_task_block, type TaskRow } from './task_block';
@@ -46,18 +46,18 @@ export function render_matrix_layout(
 		const track = row_el.createDiv({ cls: 'ripe-matrix-track' });
 		const items = rows.filter((row) => row.entry.todo.importance === importance);
 		const width = BLOCK_WIDTH_PX / (track.clientWidth || FALLBACK_TRACK_PX);
-		const starts = items.map((row) => {
+		const ideals = items.map((row) => {
 			const days = days_to_critical(row.urgency.window, options.today);
 			return matrix_start(time_position(days, options.range_days), width);
 		});
-		const lanes = assign_lanes(starts, width);
-		track.setCssProps({ '--ripe-lanes': String(lane_count(lanes)) });
+		const placements = place_blocks(ideals, width);
+		track.setCssProps({ '--ripe-lanes': String(lane_count(placements.map((p) => p.lane))) });
 		items.forEach((row, i) => {
 			const block = render_task_block(track, row, actions);
 			block.addClass('ripe-matrix-block');
 			block.setCssProps({
-				'--ripe-x': `${(starts[i] ?? 0) * 100}%`,
-				'--ripe-lane': String(lanes[i] ?? 0),
+				'--ripe-x': `${(placements[i]?.start ?? 0) * 100}%`,
+				'--ripe-lane': String(placements[i]?.lane ?? 0),
 			});
 		});
 	}
