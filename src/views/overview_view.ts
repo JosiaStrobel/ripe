@@ -1,11 +1,13 @@
 import { ItemView, Menu, Notice, setIcon, type WorkspaceLeaf } from 'obsidian';
 import { complete_line, is_recurring, skip_line } from '../actions';
+import { group_by_level } from '../grouping';
 import { t } from '../i18n';
 import { today } from '../parser/date';
 import type { TodoEntry, TodoError } from '../parser/todo';
 import type { NoteLinker } from '../modals/note_linker';
 import type { TaskEditor } from '../modals/task_editor';
 import type { TodoStore } from '../store';
+import type { UndoManager } from '../undo';
 import {
 	compare_urgency,
 	compute_urgency,
@@ -21,6 +23,7 @@ export interface OverviewDeps {
 	store: TodoStore;
 	editor: TaskEditor;
 	notes: NoteLinker;
+	undo: UndoManager;
 	get_urgency_options: () => UrgencyOptions;
 }
 
@@ -39,6 +42,7 @@ export class OverviewView extends ItemView {
 	private readonly store: TodoStore;
 	private readonly editor: TaskEditor;
 	private readonly notes: NoteLinker;
+	private readonly undo: UndoManager;
 	private readonly get_urgency_options: () => UrgencyOptions;
 
 	constructor(leaf: WorkspaceLeaf, deps: OverviewDeps) {
@@ -47,6 +51,7 @@ export class OverviewView extends ItemView {
 			store: this.store,
 			editor: this.editor,
 			notes: this.notes,
+			undo: this.undo,
 			get_urgency_options: this.get_urgency_options,
 		} = deps);
 		this.addAction('plus', t('command.add_task'), () => this.editor.add());
@@ -94,8 +99,12 @@ export class OverviewView extends ItemView {
 			el.createDiv({ cls: 'ripe-empty', text: t('view.empty') });
 			return;
 		}
-		const grid = el.createDiv({ cls: 'ripe-grid' });
-		for (const row of rows) this.render_block(grid, row);
+		// One grid per color level, so each color starts on a new row.
+		const groups = el.createDiv({ cls: 'ripe-groups' });
+		for (const group of group_by_level(rows, (row) => urgency_level(row.urgency))) {
+			const grid = groups.createDiv({ cls: 'ripe-grid' });
+			for (const row of group.items) this.render_block(grid, row);
+		}
 	}
 
 	/** Hint and create button when the todo file does not exist. */
@@ -138,7 +147,7 @@ export class OverviewView extends ItemView {
 		setIcon(done, 'check');
 		done.addEventListener('click', (evt) => {
 			evt.stopPropagation();
-			void this.apply(row.entry, complete_line(todo, today()));
+			void this.complete(row.entry);
 		});
 
 		// "click" fires only for the primary button and taps; right click and long press
@@ -161,14 +170,14 @@ export class OverviewView extends ItemView {
 			item
 				.setTitle(t('action.done'))
 				.setIcon('check')
-				.onClick(() => this.apply(entry, complete_line(todo, today()))),
+				.onClick(() => this.complete(entry)),
 		);
 		if (is_recurring(todo)) {
 			menu.addItem((item) =>
 				item
 					.setTitle(t('action.skip'))
 					.setIcon('skip-forward')
-					.onClick(() => this.apply(entry, skip_line(todo, today()))),
+					.onClick(() => this.skip(entry)),
 			);
 		}
 		menu.addItem((item) =>
@@ -223,10 +232,26 @@ export class OverviewView extends ItemView {
 		menu.addSeparator();
 	}
 
-	/** Write a changed task line and redraw. */
-	private async apply(entry: TodoEntry, replacement: string): Promise<void> {
+	/** Mark a task done (with undo). */
+	private complete(entry: TodoEntry): Promise<void> {
+		const message = t('notice.done', { title: entry.todo.title });
+		return this.apply(entry, complete_line(entry.todo, today()), message);
+	}
+
+	/** Skip a recurring task (with undo). */
+	private skip(entry: TodoEntry): Promise<void> {
+		const message = t('notice.skipped', { title: entry.todo.title });
+		return this.apply(entry, skip_line(entry.todo, today()), message);
+	}
+
+	/** Write a changed task line, offer undo and redraw. */
+	private async apply(entry: TodoEntry, replacement: string, message: string): Promise<void> {
 		try {
-			if (!(await this.store.update_line(entry, replacement))) new Notice(t('notice.line_changed'));
+			if (await this.store.update_line(entry, replacement)) {
+				this.undo.record(entry.line_no, entry.todo.raw, replacement, message);
+			} else {
+				new Notice(t('notice.line_changed'));
+			}
 		} catch (error) {
 			console.error('Ripe: failed to update todo line', error);
 			new Notice(t('notice.write_failed'));

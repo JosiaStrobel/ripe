@@ -1,4 +1,5 @@
 import { debounce, getLanguage, Plugin, type TAbstractFile } from 'obsidian';
+import { apply_color_scheme } from './color_scheme';
 import { set_language, t } from './i18n';
 import { today } from './parser/date';
 import { DEFAULT_SETTINGS, parse_settings, type PluginSettings } from './settings';
@@ -6,6 +7,7 @@ import { SettingsTab } from './settings_tab';
 import { NoteLinker } from './modals/note_linker';
 import { TaskEditor } from './modals/task_editor';
 import { TodoStore } from './store';
+import { UndoManager } from './undo';
 import { OVERVIEW_VIEW_TYPE, OverviewView } from './views/overview_view';
 
 const DAY_CHECK_INTERVAL_MS = 60_000;
@@ -16,11 +18,13 @@ export default class MainPlugin extends Plugin {
 	private readonly store = new TodoStore(this.app, () => this.settings);
 	private readonly editor = new TaskEditor(this.app, this.store, () => this.settings);
 	private readonly notes = new NoteLinker(this.app, this.store, () => this.settings);
+	private readonly undo = new UndoManager(this.store, () => this.refresh_views());
 	private readonly refresh_views_debounced = debounce(() => this.refresh_views(), 300, true);
 
 	async onload(): Promise<void> {
 		set_language(getLanguage());
 		await this.load_settings();
+		apply_color_scheme(this.settings.colorScheme);
 		this.addSettingTab(new SettingsTab(this.app, this));
 
 		this.registerView(
@@ -30,6 +34,7 @@ export default class MainPlugin extends Plugin {
 					store: this.store,
 					editor: this.editor,
 					notes: this.notes,
+					undo: this.undo,
 					get_urgency_options: () => ({ curve_exponent: this.settings.curveExponent }),
 				}),
 		);
@@ -40,6 +45,15 @@ export default class MainPlugin extends Plugin {
 			callback: () => this.open_overview(),
 		});
 		this.addCommand({ id: 'add-task', name: t('command.add_task'), callback: () => this.editor.add() });
+		this.addCommand({
+			id: 'undo-last',
+			name: t('command.undo'),
+			checkCallback: (checking) => {
+				if (!this.undo.can_undo) return false;
+				if (!checking) void this.undo.undo();
+				return true;
+			},
+		});
 		this.addCommand({ id: 'quick-add', name: t('command.quick_add'), callback: () => this.editor.quick() });
 
 		this.app.workspace.onLayoutReady(() => this.register_watchers());
@@ -84,6 +98,10 @@ export default class MainPlugin extends Plugin {
 		}
 	}
 
+	onunload(): void {
+		apply_color_scheme(null);
+	}
+
 	/** Load and validate settings from data.json. */
 	async load_settings(): Promise<void> {
 		this.settings = parse_settings(await this.loadData());
@@ -92,6 +110,7 @@ export default class MainPlugin extends Plugin {
 	/** Persist the current settings to data.json and redraw. */
 	async save_settings(): Promise<void> {
 		await this.saveData(this.settings);
+		apply_color_scheme(this.settings.colorScheme);
 		this.refresh_views();
 	}
 }

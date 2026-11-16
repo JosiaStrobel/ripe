@@ -90,6 +90,8 @@ Beispiel Blumengießen (`alle:: 6d`, `toleranz:: 3d`, zuletzt gegossen am Tag 0)
 - Die Dringlichkeit `u` wird auf eine Farbskala abgebildet: Grün → Gelb → Orange → Rot.
 - Entweder stufenlos oder in festen Stufen (z. B. 4). Das wäre eine Einstellung.
 - Die Farben über CSS-Variablen definieren, damit sie zu hellem und dunklem Theme passen.
+- ☑ Blöcke sind **deckend** gefärbt, Text mit fester Kontrastfarbe pro Stufe (dunkel bzw. weiß).
+- ☑ **Farbverlauf als Einstellung:** Grün → Rot (Standard: Grün, Gelb, Orange, Rot), Blau → Rot (Blau, Lila, Pink, Rot), Blau → Gelb → Rot (Blau, Gelb, Orange, Rot). Umsetzung als Body-Klasse `ripe-scheme-…`, Farben aus Obsidians `--color-…-rgb`.
 
 ---
 
@@ -199,6 +201,7 @@ Bedienung (Vorschlag):
 - **Tippen:** Detail-Notiz öffnen, falls vorhanden, sonst Aktionsmenü.
 - **Langes Drücken oder Rechtsklick:** Aktionsmenü.
 - Ein gut erreichbarer **Erledigt-Knopf** direkt auf dem Block.
+- ☑ **Rückgängig:** Nach Erledigt/Überspringen zeigt eine Meldung ~8 s lang „Rückgängig“; zusätzlich Befehl „Letztes Abhaken rückgängig machen“ (nur sichtbar, wenn möglich). Nur der letzte Schritt; die alte Zeile wird nur wiederhergestellt, wenn die Zeile noch unverändert ist. Mit den Logs (Etappe 5) muss Rückgängig auch den Log-Eintrag entfernen.
 
 ---
 
@@ -310,7 +313,7 @@ Eine Datei `Einkaufen.md`. Die Überschriften sind Kategorien in der Reihenfolge
 - ☑ **Erledigte Einmal-Aufgaben:** bleiben als `- [x] … [erledigt:: JJJJ-MM-TT]` stehen. Ein späterer Befehl kann sie in eine Archiv-Datei verschieben.
 - ☐ **Ein Plugin oder zwei?** Todos und Einkaufsliste teilen sich wenig Logik. Ein gemeinsames Plugin wäre praktisch, wenn beides auf einem Bildschirm erscheinen soll.
 - ☑ **Kalenderregeln für `jeden`:** erste Version kennt Wochentage (`dienstag`, `mo, do`) und Monatstag (`monatlich 1`). Weitere Formen („jeden 2. Montag“, jährlich) später; der Parser wird dafür erweiterbar gebaut.
-- ☑ **Layout der Übersicht:** vorerst responsives Raster (auf dem Handy einspaltig), absteigend nach Dringlichkeit. Andere Layouts später möglich.
+- ☑ **Layout der Übersicht:** vorerst responsives Raster (auf dem Handy einspaltig), absteigend nach Dringlichkeit. Pro Farbstufe ein eigenes Raster (Rot, Orange, Gelb, Grün, ohne Zeit): jede Farbe beginnt in einer neuen Zeile, Farben mischen sich nie in einer Zeile. Später weitere Anzeigeformen zur Auswahl (z. B. ungruppiertes Raster, Liste, Matrix). Andere Layouts später möglich.
 
 ---
 

@@ -50,11 +50,16 @@ export class TodoStore {
 
 	/** Replace a task line if it is unchanged; false if the file or line changed meanwhile. */
 	async update_line(entry: TodoEntry, replacement: string): Promise<boolean> {
+		return this.replace_line_text(entry.line_no, entry.todo.raw, replacement);
+	}
+
+	/** Replace the line with text `expected` (near `line_no`); false if it is not found. */
+	async replace_line_text(line_no: number, expected: string, replacement: string): Promise<boolean> {
 		const file = this.file;
 		if (!file) return false;
 		let ok = false;
 		await this.app.vault.process(file, (content) => {
-			const result = replace_line(content, entry.line_no, entry.todo.raw, replacement);
+			const result = replace_line(content, line_no, expected, replacement);
 			ok = result !== null;
 			return result ?? content;
 		});

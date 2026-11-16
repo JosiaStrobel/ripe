@@ -16,7 +16,11 @@ _Einzige Stelle für den Umsetzungsstand. Wird nach jeder Arbeitssitzung aktuali
 - [x] Dialog-Bedienung fürs Tablett (2026-11-16, in Obsidian getestet): Dauerfelder als Zahl + −/+ + Einheit (`modals/duration_input.ts`), Datum über der Dauer bei Vorlauf/Puffer, Art + Wichtigkeit oben nebeneinander, Dialoge auf Mobilgeräten oben
 - [x] Notiz anlegen / verknüpfen / Verknüpfung entfernen als Menüaktionen (2026-11-16, in Obsidian getestet): `notes.ts` (reine Logik), `modals/note_linker.ts`; Ort neuer Notizen nach Obsidian-Einstellung, nie überschreiben (`Name 1`, `Name 2` …)
 - [x] Optionale MOC-Tree-Integration für „Notiz anlegen“ + Suche nach `title`/`aliases` (2026-11-16, in Obsidian getestet): `integrations/moc_tree.ts`, Einstellung `noteCreator`
-- [ ] Etappe 5: Logs für wiederkehrende Aufgaben
+- [x] Rückgängig für Erledigt/Überspringen (2026-11-16, in Obsidian getestet): `undo.ts`, Meldung mit Knopf, Befehl `undo-last`
+- [x] Übersicht nach Farben gruppiert, eine Farbe pro Zeile (2026-11-16, in Obsidian getestet): `grouping.ts`; Blöcke deckend gefärbt mit fester Kontrast-Textfarbe pro Stufe (in Obsidian getestet)
+- [x] Einstellung Farbverlauf (2026-11-16, in Obsidian getestet): `color_scheme.ts`, Body-Klasse
+- [ ] Weitere Anzeigeformen der Übersicht zur Auswahl (Wunsch, später)
+- [ ] Etappe 5: Logs für wiederkehrende Aufgaben (Rückgängig muss dann auch den Log-Eintrag entfernen)
 - [x] Beispielbefehl und Beispiel-Einstellung ersetzt (2026-11-16)
 
 ## Bekannte Probleme

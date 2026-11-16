@@ -23,6 +23,11 @@ describe('parse_settings', () => {
 		expect(parse_settings({ noteCreator: 'other' }).noteCreator).toBe('ripe');
 	});
 
+	it('reads the color scheme', () => {
+		expect(parse_settings({ colorScheme: 'blue_red' }).colorScheme).toBe('blue_red');
+		expect(parse_settings({ colorScheme: 'rainbow' }).colorScheme).toBe('green_red');
+	});
+
 	it('drops invalid values', () => {
 		expect(
 			parse_settings({ todoFile: '  ', defaultImportance: 2.5, curveExponent: 10, quickDuration: 'bald' }),

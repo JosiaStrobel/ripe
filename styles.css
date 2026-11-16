@@ -1,13 +1,43 @@
 /* Plugin styles; use Obsidian CSS variables only. */
 
-/* Urgency colors (level 0–3); themes can override these variables. */
+/* Urgency colors (level 0–3) per color gradient; themes can override these variables.
+   Text colors are fixed for contrast because the backgrounds are solid fixed colors. */
 .ripe-overview,
 .ripe-task-modal {
+	--ripe-text-on-light: #1c1c1c;
+	--ripe-text-on-dark: #ffffff;
+	--ripe-level-none-rgb: var(--mono-rgb-100);
+	/* Default gradient: green → red */
 	--ripe-level-0-rgb: var(--color-green-rgb);
 	--ripe-level-1-rgb: var(--color-yellow-rgb);
 	--ripe-level-2-rgb: var(--color-orange-rgb);
 	--ripe-level-3-rgb: var(--color-red-rgb);
-	--ripe-level-none-rgb: var(--mono-rgb-100);
+	--ripe-level-0-text: var(--ripe-text-on-light);
+	--ripe-level-1-text: var(--ripe-text-on-light);
+	--ripe-level-2-text: var(--ripe-text-on-light);
+	--ripe-level-3-text: var(--ripe-text-on-dark);
+}
+
+.ripe-scheme-blue_red .ripe-overview,
+.ripe-scheme-blue_red .ripe-task-modal {
+	--ripe-level-0-rgb: var(--color-blue-rgb);
+	--ripe-level-1-rgb: var(--color-purple-rgb);
+	--ripe-level-2-rgb: var(--color-pink-rgb);
+	--ripe-level-0-text: var(--ripe-text-on-dark);
+	--ripe-level-1-text: var(--ripe-text-on-dark);
+	--ripe-level-2-text: var(--ripe-text-on-dark);
+}
+
+.ripe-scheme-blue_yellow_red .ripe-overview,
+.ripe-scheme-blue_yellow_red .ripe-task-modal {
+	--ripe-level-0-rgb: var(--color-blue-rgb);
+	--ripe-level-0-text: var(--ripe-text-on-dark);
+}
+
+.ripe-groups {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-4-4);
 }
 
 .ripe-grid {
@@ -28,31 +58,38 @@
 
 .ripe-block {
 	--ripe-rgb: var(--ripe-level-none-rgb);
+	--ripe-text: var(--text-normal);
 	display: flex;
 	align-items: flex-start;
 	gap: var(--size-4-2);
 	min-height: 56px;
 	padding: var(--size-4-2) var(--size-4-2) var(--size-4-2) var(--size-4-3);
 	border-radius: var(--radius-m);
-	border-left: 4px solid rgba(var(--ripe-rgb), 0.9);
-	background-color: rgba(var(--ripe-rgb), 0.15);
+	background-color: rgb(var(--ripe-rgb));
+	color: var(--ripe-text);
 	cursor: pointer;
 	user-select: none;
 }
 
 .ripe-block:hover {
-	background-color: rgba(var(--ripe-rgb), 0.25);
+	filter: brightness(1.08);
 }
 
-.ripe-level-0 { --ripe-rgb: var(--ripe-level-0-rgb); }
-.ripe-level-1 { --ripe-rgb: var(--ripe-level-1-rgb); }
-.ripe-level-2 { --ripe-rgb: var(--ripe-level-2-rgb); }
-.ripe-level-3 { --ripe-rgb: var(--ripe-level-3-rgb); }
-.ripe-level-none { --ripe-rgb: var(--ripe-level-none-rgb); }
+.ripe-level-0 { --ripe-rgb: var(--ripe-level-0-rgb); --ripe-text: var(--ripe-level-0-text); }
+.ripe-level-1 { --ripe-rgb: var(--ripe-level-1-rgb); --ripe-text: var(--ripe-level-1-text); }
+.ripe-level-2 { --ripe-rgb: var(--ripe-level-2-rgb); --ripe-text: var(--ripe-level-2-text); }
+.ripe-level-3 { --ripe-rgb: var(--ripe-level-3-rgb); --ripe-text: var(--ripe-level-3-text); }
 
-.ripe-level-none {
-	border-left-color: var(--background-modifier-border);
+/* Tasks without timing stay neutral. */
+.ripe-block.ripe-level-none {
+	border-left: 5px solid var(--background-modifier-border);
 	background-color: var(--background-secondary);
+	--ripe-text: var(--text-normal);
+}
+
+.ripe-block.ripe-level-none:hover {
+	filter: none;
+	background-color: var(--background-modifier-hover);
 }
 
 .ripe-block-body {
@@ -61,7 +98,7 @@
 }
 
 .ripe-block-title {
-	color: var(--text-normal);
+	color: var(--ripe-text);
 	overflow-wrap: anywhere;
 }
 
@@ -76,12 +113,18 @@
 	gap: var(--size-4-2);
 	margin-top: var(--size-2-1);
 	font-size: var(--font-ui-smaller);
-	color: var(--text-muted);
+	color: var(--ripe-text);
+	opacity: 0.85;
 }
 
 .ripe-overdue {
-	font-weight: var(--font-semibold);
-	color: rgb(var(--ripe-level-3-rgb));
+	font-weight: var(--font-bold);
+}
+
+.ripe-block .ripe-done {
+	--icon-color: var(--ripe-text);
+	--icon-color-hover: var(--ripe-text);
+	color: var(--ripe-text);
 }
 
 .ripe-note-icon {
@@ -242,7 +285,7 @@
 	min-width: 0;
 	height: 22px;
 	border-radius: var(--radius-s);
-	background-color: rgba(var(--ripe-rgb), 0.85);
+	background-color: rgb(var(--ripe-rgb));
 }
 
 .ripe-preview-hidden {
@@ -273,4 +316,10 @@
 .ripe-note-suggestion-path {
 	font-size: var(--font-ui-smaller);
 	color: var(--text-muted);
+}
+
+/* Undo button inside the notice after completing a task. */
+.ripe-undo-button {
+	margin-left: var(--size-4-3);
+	min-height: 32px;
 }

@@ -54,6 +54,19 @@ export class SettingsTab extends PluginSettingTab {
 				},
 			},
 			{
+				name: t('settings.color_scheme.name'),
+				desc: t('settings.color_scheme.desc'),
+				control: {
+					type: 'dropdown',
+					key: 'colorScheme',
+					options: {
+						green_red: t('settings.color_scheme.green_red'),
+						blue_red: t('settings.color_scheme.blue_red'),
+						blue_yellow_red: t('settings.color_scheme.blue_yellow_red'),
+					},
+				},
+			},
+			{
 				name: t('settings.quick_duration.name'),
 				desc: t('settings.quick_duration.desc'),
 				control: {

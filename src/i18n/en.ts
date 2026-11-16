@@ -85,6 +85,16 @@ const en = {
 	'settings.note_creator.ripe': 'Ripe (task title as name)',
 	'settings.note_creator.moc_tree': 'MOC Tree',
 	'settings.note_creator.moc_tree_dialog': 'MOC Tree with dialog',
+	'command.undo': 'Undo last completion',
+	'action.undo': 'Undo',
+	'notice.done': '{title}: done',
+	'notice.skipped': '{title}: skipped',
+	'notice.undo_failed': 'The line was changed meanwhile, nothing undone.',
+	'settings.color_scheme.name': 'Color gradient',
+	'settings.color_scheme.desc': 'Colors from new to critical.',
+	'settings.color_scheme.green_red': 'Green → red',
+	'settings.color_scheme.blue_red': 'Blue → red',
+	'settings.color_scheme.blue_yellow_red': 'Blue → yellow → red',
 } as const;
 
 export type MessageKey = keyof typeof en;

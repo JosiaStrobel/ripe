@@ -87,6 +87,16 @@ const de: Messages = {
 	'settings.note_creator.ripe': 'Ripe (Aufgabentitel als Name)',
 	'settings.note_creator.moc_tree': 'MOC Tree',
 	'settings.note_creator.moc_tree_dialog': 'MOC Tree mit Dialog',
+	'command.undo': 'Letztes Abhaken rückgängig machen',
+	'action.undo': 'Rückgängig',
+	'notice.done': '{title}: erledigt',
+	'notice.skipped': '{title}: übersprungen',
+	'notice.undo_failed': 'Die Zeile wurde inzwischen geändert, nichts rückgängig gemacht.',
+	'settings.color_scheme.name': 'Farbverlauf',
+	'settings.color_scheme.desc': 'Farben von neu bis kritisch.',
+	'settings.color_scheme.green_red': 'Grün → Rot',
+	'settings.color_scheme.blue_red': 'Blau → Rot',
+	'settings.color_scheme.blue_yellow_red': 'Blau → Gelb → Rot',
 };
 
 export default de;

@@ -16,7 +16,13 @@ export interface PluginSettings {
 	quickDuration: string;
 	/** Who creates detail notes; MOC Tree options apply only while that plugin is enabled. */
 	noteCreator: NoteCreator;
+	/** Color gradient of the urgency levels. */
+	colorScheme: ColorScheme;
 }
+
+/** Available color gradients (CSS class `ripe-scheme-<name>`). */
+export type ColorScheme = 'green_red' | 'blue_red' | 'blue_yellow_red';
+export const COLOR_SCHEMES: readonly ColorScheme[] = ['green_red', 'blue_red', 'blue_yellow_red'];
 
 /** Creator of new detail notes. */
 export type NoteCreator = 'ripe' | 'moc_tree' | 'moc_tree_dialog';
@@ -30,6 +36,7 @@ export const DEFAULT_SETTINGS: Readonly<PluginSettings> = {
 	curveExponent: 1,
 	quickDuration: '1w',
 	noteCreator: 'ripe',
+	colorScheme: 'green_red',
 };
 
 export const CURVE_MIN = 0.5;
@@ -68,6 +75,7 @@ export function parse_settings(raw: unknown): PluginSettings {
 	if (typeof raw.quickDuration === 'string' && parse_duration(raw.quickDuration)) {
 		settings.quickDuration = raw.quickDuration.trim().toLowerCase();
 	}
+	settings.colorScheme = COLOR_SCHEMES.find((c) => c === raw.colorScheme) ?? settings.colorScheme;
 	settings.noteCreator = NOTE_CREATORS.find((c) => c === raw.noteCreator) ?? settings.noteCreator;
 	return settings;
 }
