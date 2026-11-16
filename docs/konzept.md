@@ -155,6 +155,9 @@ Formatregeln:
 
 - **„Notiz anlegen“** an einem Block: Die Notiz wird erstellt und der Link an die Zeile gehängt. Eine Aufgabe kann so jederzeit „wachsen“.
 - **Bestehende Notiz verknüpfen** über die Obsidian-Suche.
+- ☑ Neue Notizen heißen wie der Titel (unerlaubte Zeichen entfernt) und landen am Ort, den Obsidian für neue Notizen vorsieht. Existiert der Name schon, wird nummeriert (`Name 1`); nie überschreiben. Ist schon eine Notiz verknüpft, bietet das Menü „Andere Notiz verknüpfen“ und „Verknüpfung entfernen“ (die Notiz selbst bleibt).
+- ☑ **Optionale Integration MOC Tree** (eigenes Plugin): Ist MOC Tree aktiv und bietet `api.version === 1`, erscheint die Einstellung „Notizen anlegen mit“: Ripe / MOC Tree / MOC Tree mit Dialog. MOC Tree legt die Notiz dann nach seinen Regeln an (Ablageordner, Dateiname, `title`/`aliases`), Ripe verlinkt sie nur. Ohne MOC Tree gilt immer Ripes eigenes Verhalten; keines der Plugins setzt das andere voraus. Zugriff gekapselt in `src/integrations/moc_tree.ts`.
+- ☑ „Notiz verknüpfen“ zeigt und durchsucht `title` und `aliases` aus dem Frontmatter (nützlich bei Zeitstempel-Dateinamen).
 - Ein Klick auf einen Block mit Link öffnet die Notiz.
 - *Später:* In der Detail-Notiz oben ein Hinweis „gehört zu Todo“ mit Dringlichkeitsfarbe und Erledigt-Knopf.
 

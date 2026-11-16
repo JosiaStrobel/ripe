@@ -85,6 +85,25 @@ export function strip_fields(line: string): string {
 	return (result + line.slice(last)).replace(/\s+/g, ' ').trim();
 }
 
+/** A wiki link outside of fields with its position. */
+export interface FreeLink {
+	start: number;
+	end: number;
+	text: string;
+}
+
+/** Wiki links (`[[…]]`) that are not inside a field, in order. */
+export function free_links(line: string): FreeLink[] {
+	const fields = parse_fields(line);
+	const links: FreeLink[] = [];
+	for (const match of line.matchAll(/\[\[[^\]]*\]\]/g)) {
+		const start = match.index;
+		if (fields.some((f) => start >= f.start && start < f.end)) continue;
+		links.push({ start, end: start + match[0].length, text: match[0] });
+	}
+	return links;
+}
+
 /** Target of the first wiki link in a text (`[[Note|Alias]]` → "Note"), or null. */
 export function wiki_link_target(text: string): string | null {
 	const match = /\[\[([^\]|#]+)(?:[#|][^\]]*)?\]\]/.exec(text);

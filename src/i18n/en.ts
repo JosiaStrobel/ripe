@@ -74,6 +74,17 @@ const en = {
 	'unit.d': 'Days',
 	'unit.w': 'Weeks',
 	'unit.m': 'Months',
+	'action.create_note': 'Create note',
+	'action.link_note': 'Link note',
+	'action.relink_note': 'Link other note',
+	'action.unlink_note': 'Remove note link',
+	'modal.link_placeholder': 'Search note…',
+	'notice.no_title': 'The task has no title for a note name.',
+	'settings.note_creator.name': 'Create notes with',
+	'settings.note_creator.desc': 'MOC Tree creates notes with its folder, file names and title.',
+	'settings.note_creator.ripe': 'Ripe (task title as name)',
+	'settings.note_creator.moc_tree': 'MOC Tree',
+	'settings.note_creator.moc_tree_dialog': 'MOC Tree with dialog',
 } as const;
 
 export type MessageKey = keyof typeof en;

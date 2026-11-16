@@ -14,7 +14,13 @@ export interface PluginSettings {
 	curveExponent: number;
 	/** Aging duration for quick capture without shortcut or button, e.g. "1w". */
 	quickDuration: string;
+	/** Who creates detail notes; MOC Tree options apply only while that plugin is enabled. */
+	noteCreator: NoteCreator;
 }
+
+/** Creator of new detail notes. */
+export type NoteCreator = 'ripe' | 'moc_tree' | 'moc_tree_dialog';
+export const NOTE_CREATORS: readonly NoteCreator[] = ['ripe', 'moc_tree', 'moc_tree_dialog'];
 
 /** Defaults for missing or invalid settings. */
 export const DEFAULT_SETTINGS: Readonly<PluginSettings> = {
@@ -23,6 +29,7 @@ export const DEFAULT_SETTINGS: Readonly<PluginSettings> = {
 	defaultImportance: 2,
 	curveExponent: 1,
 	quickDuration: '1w',
+	noteCreator: 'ripe',
 };
 
 export const CURVE_MIN = 0.5;
@@ -61,5 +68,6 @@ export function parse_settings(raw: unknown): PluginSettings {
 	if (typeof raw.quickDuration === 'string' && parse_duration(raw.quickDuration)) {
 		settings.quickDuration = raw.quickDuration.trim().toLowerCase();
 	}
+	settings.noteCreator = NOTE_CREATORS.find((c) => c === raw.noteCreator) ?? settings.noteCreator;
 	return settings;
 }

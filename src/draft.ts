@@ -1,6 +1,6 @@
 import { format_date, parse_date, type Day } from './parser/date';
 import { add_duration, format_duration, parse_duration } from './parser/duration';
-import { parse_fields, remove_field, set_field } from './parser/fields';
+import { free_links, parse_fields, remove_field, set_field } from './parser/fields';
 import {
 	ALIASES,
 	FIELD,
@@ -96,16 +96,10 @@ function replace_title(line: string, title: string): string {
 	const match = TASK_PREFIX.exec(line);
 	if (!match) return line;
 	const rest = match[2] ?? '';
-	const fields = parse_fields(rest);
-	const kept: Array<{ start: number; text: string }> = fields.map((f) => ({
-		start: f.start,
-		text: rest.slice(f.start, f.end),
-	}));
-	for (const link of rest.matchAll(/\[\[[^\]]*\]\]/g)) {
-		const start = link.index;
-		if (!fields.some((f) => start >= f.start && start < f.end)) kept.push({ start, text: link[0] });
-	}
-	kept.sort((a, b) => a.start - b.start);
+	const kept = [
+		...parse_fields(rest).map((f) => ({ start: f.start, text: rest.slice(f.start, f.end) })),
+		...free_links(rest),
+	].sort((a, b) => a.start - b.start);
 	return [match[1], title.trim(), ...kept.map((k) => k.text)].filter((s) => s).join(' ');
 }
 

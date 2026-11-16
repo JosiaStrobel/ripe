@@ -14,7 +14,8 @@ _Einzige Stelle für den Umsetzungsstand. Wird nach jeder Arbeitssitzung aktuali
 - [x] Vorlauf als Datum im Eingabe-Dialog (2026-11-16, in Obsidian getestet); Vorschau verankert Deadlines an `fällig`
 - [x] Puffer als Datum („rot ab“) im Eingabe-Dialog (2026-11-16, in Obsidian getestet)
 - [x] Dialog-Bedienung fürs Tablett (2026-11-16, in Obsidian getestet): Dauerfelder als Zahl + −/+ + Einheit (`modals/duration_input.ts`), Datum über der Dauer bei Vorlauf/Puffer, Art + Wichtigkeit oben nebeneinander, Dialoge auf Mobilgeräten oben
-- [ ] Notiz anlegen / verknüpfen als Menüaktion (Konzept 4.5)
+- [x] Notiz anlegen / verknüpfen / Verknüpfung entfernen als Menüaktionen (2026-11-16, in Obsidian getestet): `notes.ts` (reine Logik), `modals/note_linker.ts`; Ort neuer Notizen nach Obsidian-Einstellung, nie überschreiben (`Name 1`, `Name 2` …)
+- [x] Optionale MOC-Tree-Integration für „Notiz anlegen“ + Suche nach `title`/`aliases` (2026-11-16, in Obsidian getestet): `integrations/moc_tree.ts`, Einstellung `noteCreator`
 - [ ] Etappe 5: Logs für wiederkehrende Aufgaben
 - [x] Beispielbefehl und Beispiel-Einstellung ersetzt (2026-11-16)
 
@@ -33,4 +34,4 @@ _Einzige Stelle für den Umsetzungsstand. Wird nach jeder Arbeitssitzung aktuali
 
 ## Nächster Schritt
 
-„Notiz anlegen / verknüpfen“ als Menüaktion, danach Etappe 5 (Logs).
+Notiz-Aktionen in Obsidian testen, danach Etappe 5 (Logs).

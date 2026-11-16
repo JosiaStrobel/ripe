@@ -3,6 +3,7 @@ import { complete_line, is_recurring, skip_line } from '../actions';
 import { t } from '../i18n';
 import { today } from '../parser/date';
 import type { TodoEntry, TodoError } from '../parser/todo';
+import type { NoteLinker } from '../modals/note_linker';
 import type { TaskEditor } from '../modals/task_editor';
 import type { TodoStore } from '../store';
 import {
@@ -14,6 +15,14 @@ import {
 } from '../urgency';
 
 export const OVERVIEW_VIEW_TYPE = 'ripe-overview';
+
+/** Services the overview uses. */
+export interface OverviewDeps {
+	store: TodoStore;
+	editor: TaskEditor;
+	notes: NoteLinker;
+	get_urgency_options: () => UrgencyOptions;
+}
 
 /** A visible task with its urgency. */
 interface Row {
@@ -27,13 +36,19 @@ export class OverviewView extends ItemView {
 	private render_id = 0;
 
 	/** Create the view for a leaf. */
-	constructor(
-		leaf: WorkspaceLeaf,
-		private readonly store: TodoStore,
-		private readonly editor: TaskEditor,
-		private readonly get_urgency_options: () => UrgencyOptions,
-	) {
+	private readonly store: TodoStore;
+	private readonly editor: TaskEditor;
+	private readonly notes: NoteLinker;
+	private readonly get_urgency_options: () => UrgencyOptions;
+
+	constructor(leaf: WorkspaceLeaf, deps: OverviewDeps) {
 		super(leaf);
+		({
+			store: this.store,
+			editor: this.editor,
+			notes: this.notes,
+			get_urgency_options: this.get_urgency_options,
+		} = deps);
 		this.addAction('plus', t('command.add_task'), () => this.editor.add());
 		this.addAction('zap', t('command.quick_add'), () => this.editor.quick());
 	}
@@ -162,15 +177,7 @@ export class OverviewView extends ItemView {
 				.setIcon('pencil')
 				.onClick(() => this.editor.edit(entry)),
 		);
-		const note = todo.note;
-		if (note) {
-			menu.addItem((item) =>
-				item
-					.setTitle(t('action.open_note'))
-					.setIcon('file-text')
-					.onClick(() => this.open_note(note)),
-			);
-		}
+		this.add_note_items(menu, entry);
 		menu.addItem((item) =>
 			item
 				.setTitle(t('action.show_line'))
@@ -178,6 +185,42 @@ export class OverviewView extends ItemView {
 				.onClick(() => this.show_line(entry.line_no)),
 		);
 		menu.showAtMouseEvent(evt);
+	}
+
+	/** Note actions: open/relink/unlink if a note is linked, else create/link. */
+	private add_note_items(menu: Menu, entry: TodoEntry): void {
+		const note = entry.todo.note;
+		menu.addSeparator();
+		if (note) {
+			menu.addItem((item) =>
+				item
+					.setTitle(t('action.open_note'))
+					.setIcon('file-text')
+					.onClick(() => this.open_note(note)),
+			);
+		} else {
+			menu.addItem((item) =>
+				item
+					.setTitle(t('action.create_note'))
+					.setIcon('file-plus')
+					.onClick(() => this.notes.create(entry)),
+			);
+		}
+		menu.addItem((item) =>
+			item
+				.setTitle(t(note ? 'action.relink_note' : 'action.link_note'))
+				.setIcon('link')
+				.onClick(() => this.notes.link(entry)),
+		);
+		if (note) {
+			menu.addItem((item) =>
+				item
+					.setTitle(t('action.unlink_note'))
+					.setIcon('unlink')
+					.onClick(() => this.notes.unlink(entry)),
+			);
+		}
+		menu.addSeparator();
 	}
 
 	/** Write a changed task line and redraw. */

@@ -18,6 +18,11 @@ describe('parse_settings', () => {
 		).toMatchObject({ todoFile: 'Listen/Todos.md', defaultImportance: 3, curveExponent: 2, quickDuration: '3d' });
 	});
 
+	it('reads the note creator', () => {
+		expect(parse_settings({ noteCreator: 'moc_tree_dialog' }).noteCreator).toBe('moc_tree_dialog');
+		expect(parse_settings({ noteCreator: 'other' }).noteCreator).toBe('ripe');
+	});
+
 	it('drops invalid values', () => {
 		expect(
 			parse_settings({ todoFile: '  ', defaultImportance: 2.5, curveExponent: 10, quickDuration: 'bald' }),

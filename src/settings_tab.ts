@@ -1,5 +1,6 @@
 import { type App, PluginSettingTab, type SettingDefinitionItem } from 'obsidian';
 import { t } from './i18n';
+import { moc_tree_api } from './integrations/moc_tree';
 import type MainPlugin from './main';
 import { parse_duration } from './parser/duration';
 import { CURVE_MAX, CURVE_MIN, normalize_todo_file, parse_settings } from './settings';
@@ -60,6 +61,20 @@ export class SettingsTab extends PluginSettingTab {
 					key: 'quickDuration',
 					placeholder: '1w',
 					validate: (value) => (parse_duration(value) ? undefined : t('settings.invalid_duration')),
+				},
+			},
+			{
+				name: t('settings.note_creator.name'),
+				desc: t('settings.note_creator.desc'),
+				visible: () => moc_tree_api(this.app) !== null,
+				control: {
+					type: 'dropdown',
+					key: 'noteCreator',
+					options: {
+						ripe: t('settings.note_creator.ripe'),
+						moc_tree: t('settings.note_creator.moc_tree'),
+						moc_tree_dialog: t('settings.note_creator.moc_tree_dialog'),
+					},
 				},
 			},
 		];

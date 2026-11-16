@@ -3,6 +3,7 @@ import { set_language, t } from './i18n';
 import { today } from './parser/date';
 import { DEFAULT_SETTINGS, parse_settings, type PluginSettings } from './settings';
 import { SettingsTab } from './settings_tab';
+import { NoteLinker } from './modals/note_linker';
 import { TaskEditor } from './modals/task_editor';
 import { TodoStore } from './store';
 import { OVERVIEW_VIEW_TYPE, OverviewView } from './views/overview_view';
@@ -14,6 +15,7 @@ export default class MainPlugin extends Plugin {
 	settings: PluginSettings = { ...DEFAULT_SETTINGS };
 	private readonly store = new TodoStore(this.app, () => this.settings);
 	private readonly editor = new TaskEditor(this.app, this.store, () => this.settings);
+	private readonly notes = new NoteLinker(this.app, this.store, () => this.settings);
 	private readonly refresh_views_debounced = debounce(() => this.refresh_views(), 300, true);
 
 	async onload(): Promise<void> {
@@ -24,9 +26,12 @@ export default class MainPlugin extends Plugin {
 		this.registerView(
 			OVERVIEW_VIEW_TYPE,
 			(leaf) =>
-				new OverviewView(leaf, this.store, this.editor, () => ({
-					curve_exponent: this.settings.curveExponent,
-				})),
+				new OverviewView(leaf, {
+					store: this.store,
+					editor: this.editor,
+					notes: this.notes,
+					get_urgency_options: () => ({ curve_exponent: this.settings.curveExponent }),
+				}),
 		);
 		this.addRibbonIcon('apple', t('command.open_overview'), () => this.open_overview());
 		this.addCommand({

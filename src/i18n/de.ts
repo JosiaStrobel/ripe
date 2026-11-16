@@ -76,6 +76,17 @@ const de: Messages = {
 	'unit.d': 'Tage',
 	'unit.w': 'Wochen',
 	'unit.m': 'Monate',
+	'action.create_note': 'Notiz anlegen',
+	'action.link_note': 'Notiz verknüpfen',
+	'action.relink_note': 'Andere Notiz verknüpfen',
+	'action.unlink_note': 'Verknüpfung entfernen',
+	'modal.link_placeholder': 'Notiz suchen …',
+	'notice.no_title': 'Die Aufgabe hat keinen Titel für den Notiznamen.',
+	'settings.note_creator.name': 'Notizen anlegen mit',
+	'settings.note_creator.desc': 'MOC Tree legt Notizen mit seinem Ordner, Dateinamen und Titel an.',
+	'settings.note_creator.ripe': 'Ripe (Aufgabentitel als Name)',
+	'settings.note_creator.moc_tree': 'MOC Tree',
+	'settings.note_creator.moc_tree_dialog': 'MOC Tree mit Dialog',
 };
 
 export default de;

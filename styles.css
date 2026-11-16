@@ -268,3 +268,9 @@
 	font-size: var(--font-ui-smaller);
 	color: var(--text-muted);
 }
+
+/* Note search: title on top, aliases and path below. */
+.ripe-note-suggestion-path {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+}
