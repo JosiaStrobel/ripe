@@ -150,8 +150,11 @@ export function draft_timing(draft: TaskDraft, default_importance: number): Todo
 	return todo?.timing ?? { kind: 'none' };
 }
 
-/** Lead time from a "visible from" date to the due date ("3w" or "12d"); null if invalid. */
-export function lead_from_date(due_text: string, from_text: string): string | null {
+/**
+ * Duration from a date to the due date ("3w" or "12d"); null if invalid or after the due
+ * date. Used to enter lead time ("visible from") and buffer ("red from") as dates.
+ */
+export function duration_before(due_text: string, from_text: string): string | null {
 	const due = parse_date(due_text);
 	const from = parse_date(from_text);
 	if (due === null || from === null || from > due) return null;
@@ -161,12 +164,12 @@ export function lead_from_date(due_text: string, from_text: string): string | nu
 		: format_duration({ amount: days, unit: 'd' });
 }
 
-/** "Visible from" date for a due date and lead time; null if either is invalid. */
-export function date_from_lead(due_text: string, lead_text: string): string | null {
+/** Date that lies a duration before the due date; null if either is invalid. */
+export function date_before(due_text: string, duration_text: string): string | null {
 	const due = parse_date(due_text);
-	const lead = parse_duration(lead_text);
-	if (due === null || !lead) return null;
-	return format_date(add_duration(due, lead, -1));
+	const duration = parse_duration(duration_text);
+	if (due === null || !duration) return null;
+	return format_date(add_duration(due, duration, -1));
 }
 
 /** Half of a duration, rounded up to whole days (weeks if even); suggested tolerance. */

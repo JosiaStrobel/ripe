@@ -72,7 +72,10 @@ const de: Messages = {
 	'preview.legend': 'Sichtbar ab {start} · rot ab {critical}',
 	'preview.due': 'fällig {due}',
 	'field.lead.date': 'Sichtbar ab',
-	'field.lead.date_desc': 'Dauer vor der Fälligkeit oder Datum wählen, ab dem die Aufgabe sichtbar ist.',
+	'field.buffer.date': 'Rot ab',
+	'unit.d': 'Tage',
+	'unit.w': 'Wochen',
+	'unit.m': 'Monate',
 };
 
 export default de;

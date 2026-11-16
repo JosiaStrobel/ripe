@@ -12,6 +12,8 @@ _Einzige Stelle für den Umsetzungsstand. Wird nach jeder Arbeitssitzung aktuali
 - [x] Etappe 4: Eingabe-Dialog und Schnellerfassung (2026-11-16, in Obsidian getestet): `draft.ts` (Entwurf ↔ Zeile, nur betroffene Felder ändern, Validierung über den Parser), `quick_capture.ts` (Kürzel am Ende), `modals/` (Eingabe-Dialog, Schnellerfassung mit Dauer-Knöpfen, `TaskEditor`), Befehle `add-task`/`quick-add`, Knöpfe +/⚡ in der Übersicht, „Bearbeiten“ im Menü, Einstellung `quickDuration`
 - [x] Farbvorschau im Eingabe-Dialog (2026-11-16, in Obsidian getestet): `preview.ts` (reine Logik), `modals/preview_strip.ts`; `urgency_in_window` aus `compute_urgency` herausgelöst
 - [x] Vorlauf als Datum im Eingabe-Dialog (2026-11-16, in Obsidian getestet); Vorschau verankert Deadlines an `fällig`
+- [x] Puffer als Datum („rot ab“) im Eingabe-Dialog (2026-11-16, in Obsidian getestet)
+- [x] Dialog-Bedienung fürs Tablett (2026-11-16, in Obsidian getestet): Dauerfelder als Zahl + −/+ + Einheit (`modals/duration_input.ts`), Datum über der Dauer bei Vorlauf/Puffer, Art + Wichtigkeit oben nebeneinander, Dialoge auf Mobilgeräten oben
 - [ ] Notiz anlegen / verknüpfen als Menüaktion (Konzept 4.5)
 - [ ] Etappe 5: Logs für wiederkehrende Aufgaben
 - [x] Beispielbefehl und Beispiel-Einstellung ersetzt (2026-11-16)

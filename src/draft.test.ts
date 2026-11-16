@@ -3,9 +3,9 @@ import {
 	apply_draft,
 	draft_from_line,
 	empty_draft,
-	date_from_lead,
+	date_before,
 	half_duration,
-	lead_from_date,
+	duration_before,
 	validate_draft,
 	type TaskDraft,
 } from './draft';
@@ -114,22 +114,22 @@ describe('half_duration', () => {
 	});
 });
 
-describe('lead time as date', () => {
+describe('durations entered as dates', () => {
 	it('computes the lead from a date', () => {
-		expect(lead_from_date('2026-12-01', '2026-11-10')).toBe('3w');
-		expect(lead_from_date('2026-12-01', '2026-11-19')).toBe('12d');
-		expect(lead_from_date('2026-12-01', '2026-12-01')).toBe('0d');
+		expect(duration_before('2026-12-01', '2026-11-10')).toBe('3w');
+		expect(duration_before('2026-12-01', '2026-11-19')).toBe('12d');
+		expect(duration_before('2026-12-01', '2026-12-01')).toBe('0d');
 	});
 
 	it('rejects dates after the due date or invalid input', () => {
-		expect(lead_from_date('2026-12-01', '2026-12-02')).toBeNull();
-		expect(lead_from_date('', '2026-11-10')).toBeNull();
-		expect(lead_from_date('2026-12-01', '')).toBeNull();
+		expect(duration_before('2026-12-01', '2026-12-02')).toBeNull();
+		expect(duration_before('', '2026-11-10')).toBeNull();
+		expect(duration_before('2026-12-01', '')).toBeNull();
 	});
 
 	it('computes the date from a lead', () => {
-		expect(date_from_lead('2026-12-01', '3w')).toBe('2026-11-10');
-		expect(date_from_lead('2026-12-31', '1m')).toBe('2026-11-30');
-		expect(date_from_lead('2026-12-01', 'x')).toBeNull();
+		expect(date_before('2026-12-01', '3w')).toBe('2026-11-10');
+		expect(date_before('2026-12-31', '1m')).toBe('2026-11-30');
+		expect(date_before('2026-12-01', 'x')).toBeNull();
 	});
 });

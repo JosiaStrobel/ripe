@@ -107,8 +107,81 @@
 }
 
 /* Dialogs */
+
+/* On mobile, place the dialogs near the top so the on-screen keyboard hides less. */
+.is-mobile .modal.ripe-task-modal,
+.is-mobile .modal.ripe-quick-modal {
+	align-self: flex-start;
+	margin-top: var(--size-4-4);
+	max-height: calc(100% - 2 * var(--size-4-4));
+}
+
+.ripe-modal-top {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--size-4-3);
+	margin-bottom: var(--size-4-2);
+}
+
+.ripe-modal-top-column {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-4-1);
+	min-width: 0;
+}
+
+.ripe-modal-top-column .dropdown {
+	width: 100%;
+}
+
+.ripe-modal-top-label {
+	font-size: var(--font-ui-small);
+	color: var(--text-muted);
+}
+
 .ripe-task-modal .ripe-title-input {
 	width: 100%;
+}
+
+/* Duration input: −/+ buttons, number, unit. */
+.ripe-duration {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-1);
+}
+
+.ripe-duration .ripe-duration-number {
+	width: 4em;
+	text-align: center;
+}
+
+.ripe-duration .ripe-step {
+	min-width: 36px;
+	min-height: 36px;
+	padding: 0;
+}
+
+.ripe-task-modal .setting-item-control {
+	flex-wrap: wrap;
+	justify-content: flex-end;
+}
+
+/* Deadline lead/buffer: date alternative stacked above the duration in one row. */
+.ripe-task-modal .ripe-stacked-control {
+	flex-direction: column;
+	align-items: flex-end;
+	gap: var(--size-4-2);
+}
+
+.ripe-date-alternative {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-2);
+}
+
+.ripe-date-label {
+	font-size: var(--font-ui-small);
+	color: var(--text-muted);
 }
 
 /* Room for the full date incl. picker icon, also with larger mobile fonts. */

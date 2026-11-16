@@ -1,10 +1,17 @@
-import { type App, type ButtonComponent, Modal, Setting, type TextComponent } from 'obsidian';
 import {
+	type App,
+	type ButtonComponent,
+	DropdownComponent,
+	Modal,
+	Setting,
+	TextComponent,
+} from 'obsidian';
+import {
+	date_before,
 	draft_field_for_key,
-	date_from_lead,
 	draft_timing,
+	duration_before,
 	half_duration,
-	lead_from_date,
 	KIND_DRAFT_FIELDS,
 	KINDS,
 	validate_draft,
@@ -16,10 +23,29 @@ import { format_date, today } from '../parser/date';
 import type { TodoError } from '../parser/todo';
 import { preview_days } from '../preview';
 import type { UrgencyOptions } from '../urgency';
+import { DurationInput } from './duration_input';
 import { render_preview_strip } from './preview_strip';
 
 /** Fields entered with the native date picker. */
 const DATE_FIELDS: ReadonlySet<DraftField> = new Set(['due', 'created', 'last_done']);
+
+/** Deadline durations that can also be entered as a date before the due date. */
+type DateAlternativeField = 'lead' | 'buffer';
+const DATE_ALTERNATIVES: readonly DateAlternativeField[] = ['lead', 'buffer'];
+
+/** Fields entered as number + unit (DurationInput). */
+const DURATION_FIELDS: ReadonlySet<DraftField> = new Set([
+	'every',
+	'tolerance',
+	'lead',
+	'buffer',
+	'critical_after',
+]);
+
+/** Common interface of the dialog's inputs for programmatic updates. */
+interface ValueInput {
+	setValue(value: string): unknown;
+}
 
 /** Fields that have a description text. */
 const DESCRIBED_FIELDS: ReadonlySet<DraftField> = new Set([
@@ -44,12 +70,12 @@ export interface TaskModalOptions {
 /** Input dialog to create or edit a task. */
 export class TaskModal extends Modal {
 	private readonly draft: TaskDraft;
-	private readonly inputs = new Map<DraftField, TextComponent>();
+	private readonly inputs = new Map<DraftField, ValueInput>();
 	private submit_button: ButtonComponent | null = null;
 	private status_el: HTMLElement | null = null;
 	private preview_el: HTMLElement | null = null;
-	/** Optional "visible from" date next to the lead time of deadlines. */
-	private lead_date_input: TextComponent | null = null;
+	/** Date inputs next to lead time ("visible from") and buffer ("red from") of deadlines. */
+	private readonly date_inputs = new Map<DateAlternativeField, TextComponent>();
 	/** True while the tolerance follows the interval automatically. */
 	private auto_tolerance: boolean;
 
@@ -83,7 +109,9 @@ export class TaskModal extends Modal {
 		const el = this.contentEl;
 		el.empty();
 		this.inputs.clear();
-		this.lead_date_input = null;
+		this.date_inputs.clear();
+
+		this.render_top_row(el);
 
 		new Setting(el).setName(t('field.title')).addText((text) => {
 			text.setValue(this.draft.title).onChange((value) => {
@@ -94,32 +122,8 @@ export class TaskModal extends Modal {
 			window.setTimeout(() => text.inputEl.focus(), 0);
 		});
 
-		new Setting(el).setName(t('modal.kind')).addDropdown((dropdown) => {
-			for (const kind of KINDS) dropdown.addOption(kind, t(`kind.${kind}`));
-			dropdown.setValue(this.draft.kind).onChange((value) => {
-				const kind = KINDS.find((k) => k === value);
-				if (!kind) return;
-				this.draft.kind = kind;
-				if (kind === 'aging' && !this.draft.values.created) {
-					this.draft.values.created = format_date(today());
-				}
-				this.render();
-			});
-		});
-
 		for (const field of KIND_DRAFT_FIELDS[this.draft.kind]) this.render_field(el, field);
 		this.preview_el = el.createDiv({ cls: 'ripe-preview' });
-
-		new Setting(el).setName(t('modal.importance')).addDropdown((dropdown) =>
-			dropdown
-				.addOptions({
-					'1': t('settings.importance.low'),
-					'2': t('settings.importance.normal'),
-					'3': t('settings.importance.high'),
-				})
-				.setValue(String(this.draft.importance))
-				.onChange((value) => (this.draft.importance = Number(value))),
-		);
 
 		this.status_el = el.createDiv({ cls: 'ripe-modal-status' });
 		new Setting(el)
@@ -133,46 +137,87 @@ export class TaskModal extends Modal {
 		this.update_status();
 	}
 
+	/** Kind and importance side by side in two columns at the top. */
+	private render_top_row(el: HTMLElement): void {
+		const row = el.createDiv({ cls: 'ripe-modal-top' });
+
+		const kind = new DropdownComponent(labeled_column(row, t('modal.kind')));
+		for (const k of KINDS) kind.addOption(k, t(`kind.${k}`));
+		kind.setValue(this.draft.kind).onChange((value) => {
+			const selected = KINDS.find((k) => k === value);
+			if (!selected) return;
+			this.draft.kind = selected;
+			if (selected === 'aging' && !this.draft.values.created) {
+				this.draft.values.created = format_date(today());
+			}
+			this.render();
+		});
+
+		new DropdownComponent(labeled_column(row, t('modal.importance')))
+			.addOptions({
+				'1': t('settings.importance.low'),
+				'2': t('settings.importance.normal'),
+				'3': t('settings.importance.high'),
+			})
+			.setValue(String(this.draft.importance))
+			.onChange((value) => (this.draft.importance = Number(value)));
+	}
+
 	/** One input row for a timing field. */
 	private render_field(el: HTMLElement, field: DraftField): void {
 		const setting = new Setting(el).setName(t(`field.${field}`));
 		if (DESCRIBED_FIELDS.has(field)) setting.setDesc(t(`field.${field}.desc` as MessageKey));
-		setting.addText((text) => {
-			if (DATE_FIELDS.has(field)) text.inputEl.type = 'date';
-			text.setValue(this.draft.values[field] ?? '').onChange((value) => {
-				this.draft.values[field] = value;
-				if (field === 'tolerance') this.auto_tolerance = value.trim() === '';
-				if (field === 'every' && this.auto_tolerance) this.suggest_tolerance(value);
-				if (field === 'lead' || field === 'due') this.sync_lead_date();
-				this.update_status();
+		const value = this.draft.values[field] ?? '';
+		const on_change = (changed: string): void => this.on_field_change(field, changed);
+		// Deadline lead/buffer: date alternative above the duration, in the same row.
+		const alternative = DATE_ALTERNATIVES.find((f) => f === field);
+		if (alternative && this.draft.kind === 'deadline') {
+			setting.controlEl.addClass('ripe-stacked-control');
+			this.add_date_alternative(setting.controlEl, alternative);
+		}
+		if (DURATION_FIELDS.has(field)) {
+			this.inputs.set(field, new DurationInput(setting.controlEl, value, on_change));
+		} else {
+			setting.addText((text) => {
+				if (DATE_FIELDS.has(field)) text.inputEl.type = 'date';
+				text.setValue(value).onChange(on_change);
+				this.inputs.set(field, text);
 			});
-			this.inputs.set(field, text);
-		});
-		if (field === 'lead' && this.draft.kind === 'deadline') this.add_lead_date(setting);
+		}
+		this.sync_dates();
 	}
 
-	/** Date input as alternative to the lead time: the lead is computed from it. */
-	private add_lead_date(setting: Setting): void {
-		setting.setDesc(t('field.lead.date_desc'));
-		setting.addText((text) => {
-			text.inputEl.type = 'date';
-			text.inputEl.setAttr('aria-label', t('field.lead.date'));
-			text.onChange((value) => {
-				const lead = lead_from_date(this.draft.values.due ?? '', value);
-				if (lead === null) return;
-				this.draft.values.lead = lead;
-				this.inputs.get('lead')?.setValue(lead);
-				this.update_status();
-			});
-			this.lead_date_input = text;
-		});
-		this.sync_lead_date();
+	/** Store a changed field value and update dependent inputs. */
+	private on_field_change(field: DraftField, value: string): void {
+		this.draft.values[field] = value;
+		if (field === 'tolerance') this.auto_tolerance = value.trim() === '';
+		if (field === 'every' && this.auto_tolerance) this.suggest_tolerance(value);
+		if (field === 'due' || field === 'lead' || field === 'buffer') this.sync_dates();
+		this.update_status();
 	}
 
-	/** Show the date that matches the current due date and lead time. */
-	private sync_lead_date(): void {
-		const date = date_from_lead(this.draft.values.due ?? '', this.draft.values.lead ?? '');
-		this.lead_date_input?.setValue(date ?? '');
+	/** Labeled date input as alternative to a duration; the duration is computed from it. */
+	private add_date_alternative(container: HTMLElement, field: DateAlternativeField): void {
+		const row = container.createDiv({ cls: 'ripe-date-alternative' });
+		row.createSpan({ cls: 'ripe-date-label', text: t(`field.${field}.date`) });
+		const text = new TextComponent(row);
+		text.inputEl.type = 'date';
+		text.onChange((value) => {
+			const duration = duration_before(this.draft.values.due ?? '', value);
+			if (duration === null) return;
+			this.draft.values[field] = duration;
+			this.inputs.get(field)?.setValue(duration);
+			this.update_status();
+		});
+		this.date_inputs.set(field, text);
+	}
+
+	/** Show the dates that match the current due date, lead time and buffer. */
+	private sync_dates(): void {
+		const due = this.draft.values.due ?? '';
+		for (const [field, input] of this.date_inputs) {
+			input.setValue(date_before(due, this.draft.values[field] ?? '') ?? '');
+		}
 	}
 
 	/** Fill the tolerance with half the interval while the user has not set one. */
@@ -208,6 +253,13 @@ export class TaskModal extends Modal {
 		await this.options.on_submit(this.draft);
 		this.close();
 	}
+}
+
+/** Column with a small label above; returns the container for the control. */
+function labeled_column(row: HTMLElement, label: string): HTMLElement {
+	const column = row.createDiv({ cls: 'ripe-modal-top-column' });
+	column.createDiv({ cls: 'ripe-modal-top-label', text: label });
+	return column;
 }
 
 /** Error text with the dialog's field label instead of the stored key. */

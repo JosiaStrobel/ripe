@@ -70,7 +70,10 @@ const en = {
 	'preview.legend': 'Visible from {start} · red from {critical}',
 	'preview.due': 'due {due}',
 	'field.lead.date': 'Visible from',
-	'field.lead.date_desc': 'Duration before the due date, or pick the date from which it is visible.',
+	'field.buffer.date': 'Red from',
+	'unit.d': 'Days',
+	'unit.w': 'Weeks',
+	'unit.m': 'Months',
 } as const;
 
 export type MessageKey = keyof typeof en;

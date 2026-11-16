@@ -147,7 +147,8 @@ Formatregeln:
 - ☑ **Schnellerfassung** für Kleinkram: ein Textfeld, Kürzel am Ende werden erkannt (`5d` → alternd, `2026-12-01` → Deadline, `alle 6d` → wiederkehrend mit Toleranz ½ Intervall, `jeden dienstag` → Kalender). Ohne Kürzel: alternd mit der Dauer eines gewählten Knopfs (`1d` `3d` `1w` `2w` `1m`) oder der Standarddauer aus den Einstellungen. Eine Vorschau zeigt, was erkannt wurde.
 - ☑ Der Eingabe-Dialog verknüpft **keine Notizen**; „Notiz anlegen / verknüpfen“ sind eigene Menüaktionen am Block (4.5). Bestehende Links bleiben beim Bearbeiten erhalten.
 - Neue Aufgaben werden ans Ende der Todo-Datei angehängt.
-- ☑ **Vorlauf als Datum** (nur Deadline): Neben der Dauer gibt es ein Datumsfeld „sichtbar ab“; daraus wird `vorlauf` berechnet (ganze Wochen als `w`, sonst `d`) und umgekehrt. Gespeichert wird nur die Dauer.
+- ☑ **Dauerfelder** im Dialog als Zahl + Einheit (Tage/Wochen/Monate) mit −/+-Knöpfen; das Zahlenfeld öffnet am Tablett den Ziffernblock. Gespeichert wird weiter der Text (`6d`).
+- ☑ **Vorlauf und Puffer als Datum** (nur Deadline): In derselben Einstellungszeile steht über der Dauer je ein Datumsfeld („sichtbar ab“ bzw. „rot ab“); daraus wird `vorlauf` bzw. `puffer` berechnet (ganze Wochen als `w`, sonst `d`) und umgekehrt. Gespeichert wird nur die Dauer.
 - ☑ **Farbvorschau** im Eingabe-Dialog: ein Kästchen pro Tag, gefärbt mit den aktuellen Einstellungen (Kurve, Stufen), 10 Tage vor bis 3 Tage nach dem Bezugstag (bei Deadlines `fällig`, sonst der kritische Tag; so verschiebt eine Puffer-Änderung die Kästchen nicht). Längere Fenster werden bis zum ersten sichtbaren Tag verlängert (max. 42 Kästchen). Heute, der kritische Tag und ggf. der Fälligkeitstag sind markiert. Nie erledigte wiederkehrende Aufgaben werden so gezeigt, als wären sie heute erledigt.
 
 ### 4.5 Detail-Notizen
