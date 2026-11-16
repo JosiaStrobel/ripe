@@ -104,3 +104,51 @@
 	height: 40px;
 	margin: calc(-1 * var(--size-2-2)) 0;
 }
+
+/* Dialogs */
+.ripe-task-modal .ripe-title-input {
+	width: 100%;
+}
+
+/* Room for the full date incl. picker icon, also with larger mobile fonts. */
+.ripe-task-modal input[type='date'] {
+	min-width: 11em;
+}
+
+.ripe-modal-status {
+	min-height: 1.5em;
+	font-size: var(--font-ui-small);
+}
+
+.ripe-quick-input {
+	width: 100%;
+	font-size: var(--font-ui-medium);
+}
+
+.ripe-quick-durations {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--size-4-2);
+	margin-top: var(--size-4-3);
+}
+
+.ripe-quick-durations button {
+	min-width: 48px;
+	min-height: 40px;
+}
+
+.ripe-quick-durations button.ripe-muted {
+	opacity: 0.5;
+}
+
+.ripe-quick-preview {
+	min-height: 1.5em;
+	margin-top: var(--size-4-3);
+	color: var(--text-normal);
+}
+
+.ripe-quick-hint {
+	margin-top: var(--size-4-1);
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+}

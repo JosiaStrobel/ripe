@@ -14,13 +14,13 @@ describe('parse_settings', () => {
 
 	it('keeps valid values', () => {
 		expect(
-			parse_settings({ todoFile: ' Listen/Todos ', defaultImportance: 3, curveExponent: 2 }),
-		).toMatchObject({ todoFile: 'Listen/Todos.md', defaultImportance: 3, curveExponent: 2 });
+			parse_settings({ todoFile: ' Listen/Todos ', defaultImportance: 3, curveExponent: 2, quickDuration: '3D' }),
+		).toMatchObject({ todoFile: 'Listen/Todos.md', defaultImportance: 3, curveExponent: 2, quickDuration: '3d' });
 	});
 
 	it('drops invalid values', () => {
 		expect(
-			parse_settings({ todoFile: '  ', defaultImportance: 2.5, curveExponent: 10 }),
+			parse_settings({ todoFile: '  ', defaultImportance: 2.5, curveExponent: 10, quickDuration: 'bald' }),
 		).toEqual(DEFAULT_SETTINGS);
 	});
 });

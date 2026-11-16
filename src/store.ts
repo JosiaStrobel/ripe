@@ -38,6 +38,16 @@ export class TodoStore {
 		return this.app.vault.create(this.path, '');
 	}
 
+	/** Append a line at the end of the todo file (created if missing). */
+	async append_line(line: string): Promise<void> {
+		const file = await this.create_file();
+		await this.app.vault.process(file, (content) => {
+			if (content.length === 0) return `${line}\n`;
+			const newline = content.includes('\r\n') ? '\r\n' : '\n';
+			return content.endsWith('\n') ? `${content}${line}${newline}` : `${content}${newline}${line}${newline}`;
+		});
+	}
+
 	/** Replace a task line if it is unchanged; false if the file or line changed meanwhile. */
 	async update_line(entry: TodoEntry, replacement: string): Promise<boolean> {
 		const file = this.file;

@@ -3,6 +3,7 @@ import { set_language, t } from './i18n';
 import { today } from './parser/date';
 import { DEFAULT_SETTINGS, parse_settings, type PluginSettings } from './settings';
 import { SettingsTab } from './settings_tab';
+import { TaskEditor } from './modals/task_editor';
 import { TodoStore } from './store';
 import { OVERVIEW_VIEW_TYPE, OverviewView } from './views/overview_view';
 
@@ -12,6 +13,7 @@ const DAY_CHECK_INTERVAL_MS = 60_000;
 export default class MainPlugin extends Plugin {
 	settings: PluginSettings = { ...DEFAULT_SETTINGS };
 	private readonly store = new TodoStore(this.app, () => this.settings);
+	private readonly editor = new TaskEditor(this.app, this.store, () => this.settings);
 	private readonly refresh_views_debounced = debounce(() => this.refresh_views(), 300, true);
 
 	async onload(): Promise<void> {
@@ -22,7 +24,9 @@ export default class MainPlugin extends Plugin {
 		this.registerView(
 			OVERVIEW_VIEW_TYPE,
 			(leaf) =>
-				new OverviewView(leaf, this.store, () => ({ curve_exponent: this.settings.curveExponent })),
+				new OverviewView(leaf, this.store, this.editor, () => ({
+					curve_exponent: this.settings.curveExponent,
+				})),
 		);
 		this.addRibbonIcon('apple', t('command.open_overview'), () => this.open_overview());
 		this.addCommand({
@@ -30,6 +34,8 @@ export default class MainPlugin extends Plugin {
 			name: t('command.open_overview'),
 			callback: () => this.open_overview(),
 		});
+		this.addCommand({ id: 'add-task', name: t('command.add_task'), callback: () => this.editor.add() });
+		this.addCommand({ id: 'quick-add', name: t('command.quick_add'), callback: () => this.editor.quick() });
 
 		this.app.workspace.onLayoutReady(() => this.register_watchers());
 	}

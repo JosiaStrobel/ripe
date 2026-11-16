@@ -1,3 +1,5 @@
+import { parse_duration } from './parser/duration';
+
 /** Current version of the stored settings format. */
 export const SETTINGS_SCHEMA_VERSION = 2;
 
@@ -10,6 +12,8 @@ export interface PluginSettings {
 	defaultImportance: number;
 	/** Urgency curve exponent k (u' = u^k); 1 = linear. */
 	curveExponent: number;
+	/** Aging duration for quick capture without shortcut or button, e.g. "1w". */
+	quickDuration: string;
 }
 
 /** Defaults for missing or invalid settings. */
@@ -18,10 +22,14 @@ export const DEFAULT_SETTINGS: Readonly<PluginSettings> = {
 	todoFile: 'Todos.md',
 	defaultImportance: 2,
 	curveExponent: 1,
+	quickDuration: '1w',
 };
 
 export const CURVE_MIN = 0.5;
 export const CURVE_MAX = 3;
+
+/** Durations offered as buttons in the quick capture. */
+export const QUICK_DURATIONS: readonly string[] = ['1d', '3d', '1w', '2w', '1m'];
 
 /** True for plain objects. */
 function is_record(value: unknown): value is Record<string, unknown> {
@@ -50,5 +58,8 @@ export function parse_settings(raw: unknown): PluginSettings {
 	const importance = number_in(raw.defaultImportance, 1, 3);
 	if (importance !== undefined && Number.isInteger(importance)) settings.defaultImportance = importance;
 	settings.curveExponent = number_in(raw.curveExponent, CURVE_MIN, CURVE_MAX) ?? settings.curveExponent;
+	if (typeof raw.quickDuration === 'string' && parse_duration(raw.quickDuration)) {
+		settings.quickDuration = raw.quickDuration.trim().toLowerCase();
+	}
 	return settings;
 }

@@ -21,7 +21,7 @@ export const FIELD = {
 } as const;
 
 /** Alternative spellings accepted when reading; writing always uses FIELD. */
-const ALIASES: Readonly<Record<string, string>> = { faellig: FIELD.due };
+export const ALIASES: Readonly<Record<string, string>> = { faellig: FIELD.due };
 
 /** Task kind, derived from which fields are present. */
 export type TodoKind = 'interval' | 'calendar' | 'deadline' | 'aging' | 'none';
@@ -66,7 +66,9 @@ export interface ParseOptions {
 }
 
 const TASK = /^\s*[-*+]\s+\[(.)\]\s?(.*)$/;
-const KIND_FIELDS: ReadonlyArray<[TodoKind, string]> = [
+
+/** Field that identifies each task kind. */
+export const KIND_FIELDS: ReadonlyArray<[TodoKind, string]> = [
 	['interval', FIELD.every],
 	['calendar', FIELD.schedule],
 	['deadline', FIELD.due],
@@ -74,7 +76,7 @@ const KIND_FIELDS: ReadonlyArray<[TodoKind, string]> = [
 ];
 
 /** Collect field values by canonical key (first occurrence wins). */
-function field_map(line: string): Map<string, string> {
+export function field_map(line: string): Map<string, string> {
 	const map = new Map<string, string>();
 	for (const field of parse_fields(line)) {
 		const key = normalize_key(field.key);

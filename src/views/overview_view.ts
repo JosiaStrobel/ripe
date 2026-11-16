@@ -3,6 +3,7 @@ import { complete_line, is_recurring, skip_line } from '../actions';
 import { t } from '../i18n';
 import { today } from '../parser/date';
 import type { TodoEntry, TodoError } from '../parser/todo';
+import type { TaskEditor } from '../modals/task_editor';
 import type { TodoStore } from '../store';
 import {
 	compare_urgency,
@@ -29,9 +30,12 @@ export class OverviewView extends ItemView {
 	constructor(
 		leaf: WorkspaceLeaf,
 		private readonly store: TodoStore,
+		private readonly editor: TaskEditor,
 		private readonly get_urgency_options: () => UrgencyOptions,
 	) {
 		super(leaf);
+		this.addAction('plus', t('command.add_task'), () => this.editor.add());
+		this.addAction('zap', t('command.quick_add'), () => this.editor.quick());
 	}
 
 	getViewType(): string {
@@ -84,10 +88,13 @@ export class OverviewView extends ItemView {
 		const box = el.createDiv({ cls: 'ripe-empty' });
 		box.createDiv({ text: t('view.missing_file', { path: this.store.path }) });
 		const button = box.createEl('button', { cls: 'mod-cta', text: t('view.create_file') });
-		button.onClickEvent(async () => {
-			await this.store.create_file();
-			await this.render();
-		});
+		button.addEventListener('click', () => void this.create_file());
+	}
+
+	/** Create the missing todo file and redraw. */
+	private async create_file(): Promise<void> {
+		await this.store.create_file();
+		await this.render();
 	}
 
 	/** One colored task block. */
@@ -114,13 +121,15 @@ export class OverviewView extends ItemView {
 			attr: { 'aria-label': t('action.done') },
 		});
 		setIcon(done, 'check');
-		done.onClickEvent(async (evt) => {
+		done.addEventListener('click', (evt) => {
 			evt.stopPropagation();
-			await this.apply(row.entry, complete_line(todo, today()));
+			void this.apply(row.entry, complete_line(todo, today()));
 		});
 
-		block.onClickEvent(async (evt) => {
-			if (todo.note) await this.open_note(todo.note);
+		// "click" fires only for the primary button and taps; right click and long press
+		// go to "contextmenu" (Obsidian's onClickEvent would also react to auxclick).
+		block.addEventListener('click', (evt) => {
+			if (todo.note) void this.open_note(todo.note);
 			else this.show_menu(row.entry, evt);
 		});
 		block.addEventListener('contextmenu', (evt) => {
@@ -147,6 +156,12 @@ export class OverviewView extends ItemView {
 					.onClick(() => this.apply(entry, skip_line(todo, today()))),
 			);
 		}
+		menu.addItem((item) =>
+			item
+				.setTitle(t('action.edit'))
+				.setIcon('pencil')
+				.onClick(() => this.editor.edit(entry)),
+		);
 		const note = todo.note;
 		if (note) {
 			menu.addItem((item) =>

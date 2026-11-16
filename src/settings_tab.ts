@@ -1,6 +1,7 @@
 import { type App, PluginSettingTab, type SettingDefinitionItem } from 'obsidian';
 import { t } from './i18n';
 import type MainPlugin from './main';
+import { parse_duration } from './parser/duration';
 import { CURVE_MAX, CURVE_MIN, normalize_todo_file, parse_settings } from './settings';
 
 /** Settings tab of the plugin (declarative, searchable in Obsidian's settings). */
@@ -49,6 +50,16 @@ export class SettingsTab extends PluginSettingTab {
 					max: CURVE_MAX,
 					step: 0.1,
 					displayFormat: (value) => value.toFixed(1),
+				},
+			},
+			{
+				name: t('settings.quick_duration.name'),
+				desc: t('settings.quick_duration.desc'),
+				control: {
+					type: 'text',
+					key: 'quickDuration',
+					placeholder: '1w',
+					validate: (value) => (parse_duration(value) ? undefined : t('settings.invalid_duration')),
 				},
 			},
 		];

@@ -144,7 +144,9 @@ Formatregeln:
 
 - Ein Dialog zum Anlegen und Bearbeiten mit den Feldern Titel, Art (wiederkehrend / Deadline / alternd), die passenden Zeitfelder, Wichtigkeit und optional eine Notiz.
 - Die Syntax muss man dann praktisch nie selbst tippen, die Datei bleibt aber jederzeit von Hand bearbeitbar.
-- Ein **Schnellerfassungs-Befehl** (z. B. Titel + „alternd, 5 Tage“) für Kleinkram.
+- ☑ **Schnellerfassung** für Kleinkram: ein Textfeld, Kürzel am Ende werden erkannt (`5d` → alternd, `2026-12-01` → Deadline, `alle 6d` → wiederkehrend mit Toleranz ½ Intervall, `jeden dienstag` → Kalender). Ohne Kürzel: alternd mit der Dauer eines gewählten Knopfs (`1d` `3d` `1w` `2w` `1m`) oder der Standarddauer aus den Einstellungen. Eine Vorschau zeigt, was erkannt wurde.
+- ☑ Der Eingabe-Dialog verknüpft **keine Notizen**; „Notiz anlegen / verknüpfen“ sind eigene Menüaktionen am Block (4.5). Bestehende Links bleiben beim Bearbeiten erhalten.
+- Neue Aufgaben werden ans Ende der Todo-Datei angehängt.
 
 ### 4.5 Detail-Notizen
 
