@@ -68,6 +68,11 @@ const de: Messages = {
 	'settings.quick_duration.name': 'Dauer der Schnellerfassung',
 	'settings.quick_duration.desc': 'Rot nach dieser Dauer, wenn weder Kürzel noch Knopf gewählt ist, z. B. 1w.',
 	'settings.invalid_duration': 'Ungültige Dauer, z. B. 5d, 2w, 1m.',
+	'date.short': '{day}.{month}.',
+	'preview.legend': 'Sichtbar ab {start} · rot ab {critical}',
+	'preview.due': 'fällig {due}',
+	'field.lead.date': 'Sichtbar ab',
+	'field.lead.date_desc': 'Dauer vor der Fälligkeit oder Datum wählen, ab dem die Aufgabe sichtbar ist.',
 };
 
 export default de;

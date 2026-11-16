@@ -66,6 +66,11 @@ const en = {
 	'settings.quick_duration.name': 'Quick capture duration',
 	'settings.quick_duration.desc': 'Red after this duration if no shortcut or button is chosen, e.g. 1w.',
 	'settings.invalid_duration': 'Invalid duration, use e.g. 5d, 2w, 1m.',
+	'date.short': '{month}/{day}',
+	'preview.legend': 'Visible from {start} · red from {critical}',
+	'preview.due': 'due {due}',
+	'field.lead.date': 'Visible from',
+	'field.lead.date_desc': 'Duration before the due date, or pick the date from which it is visible.',
 } as const;
 
 export type MessageKey = keyof typeof en;

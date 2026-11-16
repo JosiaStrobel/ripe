@@ -10,6 +10,8 @@ _Einzige Stelle für den Umsetzungsstand. Wird nach jeder Arbeitssitzung aktuali
 - [x] Etappe 2: `src/urgency.ts` mit Tests (2026-11-16): Zeitfenster pro Typ, `u` mit Kurve `u^k`, `overdue_days`, Snooze, Sortierung
 - [x] Etappe 3: Übersicht (2026-11-16, in Obsidian getestet): `store.ts` (lesen, Zeile nur ersetzen, wenn unverändert), `actions.ts` (Erledigt, Überspringen, `replace_line`), `views/overview_view.ts` (Raster, Farbstufen 0–3, Erledigt-Knopf, Tippen/Langdrücken/Rechtsklick → Menü), Einstellungen deklarativ (Todo-Datei, Standard-Wichtigkeit, Kurve), Befehl `open-overview`, Aktualisierung bei Dateiänderung und Tageswechsel
 - [x] Etappe 4: Eingabe-Dialog und Schnellerfassung (2026-11-16, in Obsidian getestet): `draft.ts` (Entwurf ↔ Zeile, nur betroffene Felder ändern, Validierung über den Parser), `quick_capture.ts` (Kürzel am Ende), `modals/` (Eingabe-Dialog, Schnellerfassung mit Dauer-Knöpfen, `TaskEditor`), Befehle `add-task`/`quick-add`, Knöpfe +/⚡ in der Übersicht, „Bearbeiten“ im Menü, Einstellung `quickDuration`
+- [x] Farbvorschau im Eingabe-Dialog (2026-11-16, in Obsidian getestet): `preview.ts` (reine Logik), `modals/preview_strip.ts`; `urgency_in_window` aus `compute_urgency` herausgelöst
+- [x] Vorlauf als Datum im Eingabe-Dialog (2026-11-16, in Obsidian getestet); Vorschau verankert Deadlines an `fällig`
 - [ ] Notiz anlegen / verknüpfen als Menüaktion (Konzept 4.5)
 - [ ] Etappe 5: Logs für wiederkehrende Aufgaben
 - [x] Beispielbefehl und Beispiel-Einstellung ersetzt (2026-11-16)

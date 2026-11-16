@@ -71,13 +71,15 @@ export function compute_urgency(
 	if (todo.done) return HIDDEN;
 	if (todo.paused_until !== null && today < todo.paused_until) return HIDDEN;
 	const window = urgency_window(todo.timing, today);
-	if (!window) return STATIC;
+	return window ? urgency_in_window(window, today, options) : STATIC;
+}
+
+/** Urgency on `day` for a fixed window (used by the overview and the dialog preview). */
+export function urgency_in_window(window: UrgencyWindow, day: Day, options: UrgencyOptions): Urgency {
 	const { start, critical } = window;
-	if (today < start) return { ...HIDDEN, window };
-	if (today >= critical) {
-		return { visible: true, u: 1, overdue_days: today - critical, window };
-	}
-	const linear = (today - start) / (critical - start);
+	if (day < start) return { ...HIDDEN, window };
+	if (day >= critical) return { visible: true, u: 1, overdue_days: day - critical, window };
+	const linear = (day - start) / (critical - start);
 	return { visible: true, u: linear ** Math.max(options.curve_exponent, 0.01), overdue_days: 0, window };
 }
 

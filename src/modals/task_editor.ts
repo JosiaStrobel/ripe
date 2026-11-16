@@ -5,6 +5,7 @@ import { today } from '../parser/date';
 import type { TodoEntry } from '../parser/todo';
 import type { PluginSettings } from '../settings';
 import type { TodoStore } from '../store';
+import type { UrgencyOptions } from '../urgency';
 import { QuickModal } from './quick_modal';
 import { TaskModal } from './task_modal';
 
@@ -25,6 +26,7 @@ export class TaskEditor {
 			submit_label: t('modal.add'),
 			draft: empty_draft('aging', today(), importance),
 			default_importance: importance,
+			urgency_options: this.urgency_options(),
 			on_submit: (draft) => this.append(draft),
 		}).open();
 	}
@@ -49,6 +51,7 @@ export class TaskEditor {
 			submit_label: t('modal.save'),
 			draft,
 			default_importance: importance,
+			urgency_options: this.urgency_options(),
 			on_submit: async (changed) => {
 				const line = apply_draft(entry.todo.raw, changed, importance);
 				await this.write(async () => {
@@ -56,6 +59,11 @@ export class TaskEditor {
 				});
 			},
 		}).open();
+	}
+
+	/** Urgency options from the current settings. */
+	private urgency_options(): UrgencyOptions {
+		return { curve_exponent: this.get_settings().curveExponent };
 	}
 
 	/** Append a new task line. */

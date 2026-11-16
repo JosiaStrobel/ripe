@@ -1,5 +1,5 @@
-import { format_date, type Day } from './parser/date';
-import { format_duration, parse_duration } from './parser/duration';
+import { format_date, parse_date, type Day } from './parser/date';
+import { add_duration, format_duration, parse_duration } from './parser/duration';
 import { parse_fields, remove_field, set_field } from './parser/fields';
 import {
 	ALIASES,
@@ -9,6 +9,7 @@ import {
 	parse_todo,
 	type TodoError,
 	type TodoKind,
+	type TodoTiming,
 } from './parser/todo';
 
 /**
@@ -141,6 +142,31 @@ export function validate_draft(draft: TaskDraft, default_importance: number): To
 	const errors: TodoError[] = draft.title.trim() ? [] : [{ code: 'missing_field', field: 'title' }];
 	const todo = parse_todo(apply_draft(null, draft, default_importance), { default_importance });
 	return [...errors, ...(todo?.errors ?? [])];
+}
+
+/** Timing the draft would produce; { kind: 'none' } if incomplete or invalid. */
+export function draft_timing(draft: TaskDraft, default_importance: number): TodoTiming {
+	const todo = parse_todo(apply_draft(null, draft, default_importance), { default_importance });
+	return todo?.timing ?? { kind: 'none' };
+}
+
+/** Lead time from a "visible from" date to the due date ("3w" or "12d"); null if invalid. */
+export function lead_from_date(due_text: string, from_text: string): string | null {
+	const due = parse_date(due_text);
+	const from = parse_date(from_text);
+	if (due === null || from === null || from > due) return null;
+	const days = due - from;
+	return days > 0 && days % 7 === 0
+		? format_duration({ amount: days / 7, unit: 'w' })
+		: format_duration({ amount: days, unit: 'd' });
+}
+
+/** "Visible from" date for a due date and lead time; null if either is invalid. */
+export function date_from_lead(due_text: string, lead_text: string): string | null {
+	const due = parse_date(due_text);
+	const lead = parse_duration(lead_text);
+	if (due === null || !lead) return null;
+	return format_date(add_duration(due, lead, -1));
 }
 
 /** Half of a duration, rounded up to whole days (weeks if even); suggested tolerance. */

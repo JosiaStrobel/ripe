@@ -1,7 +1,8 @@
 /* Plugin styles; use Obsidian CSS variables only. */
 
 /* Urgency colors (level 0–3); themes can override these variables. */
-.ripe-overview {
+.ripe-overview,
+.ripe-task-modal {
 	--ripe-level-0-rgb: var(--color-green-rgb);
 	--ripe-level-1-rgb: var(--color-yellow-rgb);
 	--ripe-level-2-rgb: var(--color-orange-rgb);
@@ -148,6 +149,48 @@
 }
 
 .ripe-quick-hint {
+	margin-top: var(--size-4-1);
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+}
+
+/* Color preview in the task dialog: one box per day. */
+.ripe-preview {
+	margin: var(--size-4-2) 0;
+}
+
+.ripe-preview-strip {
+	display: flex;
+	gap: 2px;
+}
+
+.ripe-preview-day {
+	flex: 1;
+	min-width: 0;
+	height: 22px;
+	border-radius: var(--radius-s);
+	background-color: rgba(var(--ripe-rgb), 0.85);
+}
+
+.ripe-preview-hidden {
+	background-color: transparent;
+	border: 1px solid var(--background-modifier-border);
+}
+
+.ripe-preview-critical {
+	box-shadow: inset 0 -4px 0 rgba(var(--mono-rgb-100), 0.5);
+}
+
+.ripe-preview-due {
+	box-shadow: inset 0 -4px 0 var(--text-normal);
+}
+
+.ripe-preview-today {
+	outline: 2px solid var(--text-normal);
+	outline-offset: 1px;
+}
+
+.ripe-preview-legend {
 	margin-top: var(--size-4-1);
 	font-size: var(--font-ui-smaller);
 	color: var(--text-muted);
