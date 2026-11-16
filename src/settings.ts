@@ -18,6 +18,10 @@ export interface PluginSettings {
 	noteCreator: NoteCreator;
 	/** Color gradient of the urgency levels. */
 	colorScheme: ColorScheme;
+	/** Days until critical shown on the matrix time axis. */
+	matrixRangeDays: number;
+	/** Test tool: slider in the overview to simulate other days. */
+	showTimeSlider: boolean;
 }
 
 /** Available color gradients (CSS class `ripe-scheme-<name>`). */
@@ -37,7 +41,12 @@ export const DEFAULT_SETTINGS: Readonly<PluginSettings> = {
 	quickDuration: '1w',
 	noteCreator: 'ripe',
 	colorScheme: 'green_red',
+	matrixRangeDays: 14,
+	showTimeSlider: false,
 };
+
+export const MATRIX_RANGE_MIN = 3;
+export const MATRIX_RANGE_MAX = 60;
 
 export const CURVE_MIN = 0.5;
 export const CURVE_MAX = 3;
@@ -75,6 +84,9 @@ export function parse_settings(raw: unknown): PluginSettings {
 	if (typeof raw.quickDuration === 'string' && parse_duration(raw.quickDuration)) {
 		settings.quickDuration = raw.quickDuration.trim().toLowerCase();
 	}
+	const range = number_in(raw.matrixRangeDays, MATRIX_RANGE_MIN, MATRIX_RANGE_MAX);
+	if (range !== undefined && Number.isInteger(range)) settings.matrixRangeDays = range;
+	if (typeof raw.showTimeSlider === 'boolean') settings.showTimeSlider = raw.showTimeSlider;
 	settings.colorScheme = COLOR_SCHEMES.find((c) => c === raw.colorScheme) ?? settings.colorScheme;
 	settings.noteCreator = NOTE_CREATORS.find((c) => c === raw.noteCreator) ?? settings.noteCreator;
 	return settings;

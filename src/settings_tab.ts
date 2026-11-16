@@ -3,7 +3,14 @@ import { t } from './i18n';
 import { moc_tree_api } from './integrations/moc_tree';
 import type MainPlugin from './main';
 import { parse_duration } from './parser/duration';
-import { CURVE_MAX, CURVE_MIN, normalize_todo_file, parse_settings } from './settings';
+import {
+	CURVE_MAX,
+	CURVE_MIN,
+	MATRIX_RANGE_MAX,
+	MATRIX_RANGE_MIN,
+	normalize_todo_file,
+	parse_settings,
+} from './settings';
 
 /** Settings tab of the plugin (declarative, searchable in Obsidian's settings). */
 export class SettingsTab extends PluginSettingTab {
@@ -67,6 +74,17 @@ export class SettingsTab extends PluginSettingTab {
 				},
 			},
 			{
+				name: t('settings.matrix_range.name'),
+				desc: t('settings.matrix_range.desc'),
+				control: {
+					type: 'slider',
+					key: 'matrixRangeDays',
+					min: MATRIX_RANGE_MIN,
+					max: MATRIX_RANGE_MAX,
+					step: 1,
+				},
+			},
+			{
 				name: t('settings.quick_duration.name'),
 				desc: t('settings.quick_duration.desc'),
 				control: {
@@ -89,6 +107,11 @@ export class SettingsTab extends PluginSettingTab {
 						moc_tree_dialog: t('settings.note_creator.moc_tree_dialog'),
 					},
 				},
+			},
+			{
+				name: t('settings.time_slider.name'),
+				desc: t('settings.time_slider.desc'),
+				control: { type: 'toggle', key: 'showTimeSlider' },
 			},
 		];
 	}

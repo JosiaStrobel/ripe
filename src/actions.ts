@@ -1,5 +1,5 @@
 import { format_date, type Day } from './parser/date';
-import { set_field } from './parser/fields';
+import { remove_field, set_field } from './parser/fields';
 import { FIELD, type Todo } from './parser/todo';
 
 /**
@@ -51,4 +51,14 @@ export function replace_line(
 	const ending = (lines[index] ?? '').endsWith('\r') ? '\r' : '';
 	lines[index] = replacement + ending;
 	return lines.join('\n');
+}
+
+/** Snooze a task: hidden until `until` (visible again on that day). */
+export function pause_line(todo: Todo, until: Day): string {
+	return set_field(todo.raw, FIELD.paused_until, format_date(until));
+}
+
+/** End a snooze: remove `pausiert_bis`. */
+export function unpause_line(todo: Todo): string {
+	return remove_field(todo.raw, FIELD.paused_until);
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { complete_line, replace_line, skip_line } from './actions';
+import { complete_line, pause_line, replace_line, skip_line, unpause_line } from './actions';
 import { parse_date } from './parser/date';
 import { parse_todo, type Todo } from './parser/todo';
 
@@ -55,5 +55,18 @@ describe('replace_line', () => {
 		expect(replace_line('- [ ] A\r\n- [ ] B\r\n', 0, '- [ ] A', '- [x] A')).toBe(
 			'- [x] A\r\n- [ ] B\r\n',
 		);
+	});
+});
+
+describe('pause', () => {
+	it('sets and replaces the snooze date', () => {
+		const line = '- [ ] Anna [erstellt:: 2026-11-10] [kritisch_nach:: 5d]';
+		const paused = pause_line(todo(line), TODAY + 4);
+		expect(paused).toBe(`${line} [pausiert_bis:: 2026-11-20]`);
+		expect(pause_line(todo(paused), TODAY + 1)).toBe(`${line} [pausiert_bis:: 2026-11-17]`);
+	});
+
+	it('removes the snooze date', () => {
+		expect(unpause_line(todo('- [ ] A [pausiert_bis:: 2026-11-20] [wichtig:: 3]'))).toBe('- [ ] A [wichtig:: 3]');
 	});
 });

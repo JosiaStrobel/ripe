@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { parse_date } from './parser/date';
 import { parse_todo, type Todo } from './parser/todo';
-import { compare_urgency, compute_urgency, urgency_level, type Urgency } from './urgency';
+import { compare_urgency, compute_urgency, hidden_info, urgency_level, type Urgency } from './urgency';
 
 /** Parse a task line; fails the test if it is not one. */
 function todo(line: string): Todo {
@@ -138,5 +138,29 @@ describe('common rules', () => {
 			[1, 1],
 			[0.5, 0],
 		]);
+	});
+});
+
+describe('hidden_info', () => {
+	const day = (iso: string): number => parse_date(iso) ?? 0;
+	const info = (line: string, date: string): ReturnType<typeof hidden_info> =>
+		hidden_info(todo(line), day(date));
+
+	it('reports when a task becomes visible', () => {
+		const line = '- [ ] Gießen [alle:: 6d] [toleranz:: 3d] [zuletzt:: 2026-11-10]';
+		expect(info(line, '2026-11-12')).toEqual({ until: day('2026-11-16'), paused: false });
+		expect(info(line, '2026-11-16')).toBeNull();
+	});
+
+	it('reports snoozed tasks, taking the later of snooze and start', () => {
+		const snoozed = '- [ ] A [erstellt:: 2026-11-01] [kritisch_nach:: 4d] [pausiert_bis:: 2026-11-20]';
+		expect(info(snoozed, '2026-11-16')).toEqual({ until: day('2026-11-20'), paused: true });
+		const both = '- [ ] F [fällig:: 2026-12-10] [vorlauf:: 1w] [pausiert_bis:: 2026-11-20]';
+		expect(info(both, '2026-11-16')).toEqual({ until: day('2026-12-03'), paused: false });
+	});
+
+	it('ignores done and visible tasks', () => {
+		expect(info('- [x] A [fällig:: 2026-12-10] [vorlauf:: 1w]', '2026-11-16')).toBeNull();
+		expect(info('- [ ] Irgendwas', '2026-11-16')).toBeNull();
 	});
 });

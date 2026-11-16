@@ -90,7 +90,7 @@ Beispiel Blumengießen (`alle:: 6d`, `toleranz:: 3d`, zuletzt gegossen am Tag 0)
 - Die Dringlichkeit `u` wird auf eine Farbskala abgebildet: Grün → Gelb → Orange → Rot.
 - Entweder stufenlos oder in festen Stufen (z. B. 4). Das wäre eine Einstellung.
 - Die Farben über CSS-Variablen definieren, damit sie zu hellem und dunklem Theme passen.
-- ☑ Blöcke sind **deckend** gefärbt, Text mit fester Kontrastfarbe pro Stufe (dunkel bzw. weiß).
+- ☑ Blöcke sind **deckend** gefärbt, leicht gedämpft durch Beimischen der Hintergrundfarbe (`--ripe-color-strength`, Standard 80 % Farbe); Text mit fester Kontrastfarbe pro Stufe (dunkel bzw. weiß).
 - ☑ **Farbverlauf als Einstellung:** Grün → Rot (Standard: Grün, Gelb, Orange, Rot), Blau → Rot (Blau, Lila, Pink, Rot), Blau → Gelb → Rot (Blau, Gelb, Orange, Rot). Umsetzung als Body-Klasse `ripe-scheme-…`, Farben aus Obsidians `--color-…-rgb`.
 
 ---
@@ -193,7 +193,10 @@ Formatregeln:
 |---|---|---|
 | **Erledigt** | `zuletzt` = heute, Log-Eintrag | Checkbox `[x]` setzen und `[erledigt:: heute]` anhängen; Zeile bleibt stehen, Übersicht blendet sie aus |
 | **Überspringen** | `zuletzt` = heute, Log-Eintrag „übersprungen“ | – |
-| **Verschieben / Snooze** | `pausiert_bis` setzen | `pausiert_bis` setzen |
+| **Pausieren** (☑ umgesetzt) | Menü „Pausieren …“: Morgen / 3 Tage / 1 Woche / 2 Wochen / Datum → `pausiert_bis`; „Pause aufheben“ entfernt das Feld; mit Rückgängig | wie links |
+
+☑ **Pause = nur ausblenden:** Das Zeitfenster bleibt unverändert; nach der Pause erscheint die Aufgabe mit der Dringlichkeit, die sie an dem Tag ohnehin hätte (auch rot/überfällig). Kein Einfrieren, kein Neustart; zum Neustart wiederkehrender Aufgaben gibt es „Überspringen“, sonst abhaken.
+
 | **Bearbeiten** | Eingabe-Dialog | Eingabe-Dialog |
 | **Notiz anlegen / öffnen** | ✓ | ✓ |
 
@@ -201,7 +204,7 @@ Bedienung (Vorschlag):
 - **Tippen:** Detail-Notiz öffnen, falls vorhanden, sonst Aktionsmenü.
 - **Langes Drücken oder Rechtsklick:** Aktionsmenü.
 - Ein gut erreichbarer **Erledigt-Knopf** direkt auf dem Block.
-- ☑ **Rückgängig:** Nach Erledigt/Überspringen zeigt eine Meldung ~8 s lang „Rückgängig“; zusätzlich Befehl „Letztes Abhaken rückgängig machen“ (nur sichtbar, wenn möglich). Nur der letzte Schritt; die alte Zeile wird nur wiederhergestellt, wenn die Zeile noch unverändert ist. Mit den Logs (Etappe 5) muss Rückgängig auch den Log-Eintrag entfernen.
+- ☑ **Rückgängig:** Nach Erledigt/Überspringen zeigt eine Meldung ~8 s lang „Rückgängig“; zusätzlich Befehl „Letzte Aktion rückgängig machen“ (Abhaken, Überspringen, Pausieren) (nur sichtbar, wenn möglich). Nur der letzte Schritt; die alte Zeile wird nur wiederhergestellt, wenn die Zeile noch unverändert ist. Mit den Logs (Etappe 5) muss Rückgängig auch den Log-Eintrag entfernen.
 
 ---
 
@@ -213,15 +216,18 @@ Bedienung (Vorschlag):
 - Sortiert nach Dringlichkeit, absteigend. Sortierung oder Filter nach Wichtigkeit als Option.
 - **Überfällige** Aufgaben bleiben rot und zeigen zusätzlich die Tage seit „kritisch“ (z. B. „+3 Tage“); bei gleichem `u = 1` wird danach sortiert.
 - Als eigene Ansicht in der Seitenleiste oder einem Tab (`ItemView`).
+- ☑ **Ausgeblendete Aufgaben** (Fenster noch nicht begonnen oder pausiert) stehen im Raster unten in einem eingeklappten Abschnitt „Ausgeblendet (N)“, sortiert nach dem Tag, ab dem sie sichtbar sind; grau mit „ab 20.11.“ bzw. „pausiert bis …“, mit allen Aktionen. Beim Öffnen der Übersicht eingeklappt. Erledigte Aufgaben erscheinen dort nicht.
 
 ### 6.2 Matrix wichtig/dringend
 
 - **Keine starren vier Kästen**, sondern eine Fläche, auf der die Blöcke frei liegen:
-  - x-Achse: Dringlichkeit `u` (0–1)
+  - x-Achse: Tage bis kritisch (absolut, gestaucht), dringend links
   - y-Achse: Wichtigkeit
 - Die Linien der Quadranten werden nur zur Orientierung eingezeichnet.
 - Effekt: Man sieht, wie Aufgaben über die Tage nach rechts wandern.
 - Überlappende Blöcke bei gleicher Wichtigkeit leicht versetzen oder stapeln.
+- ☑ Umsetzung: drei Zeilen (Wichtigkeit hoch/normal/niedrig), Block-Position waagrecht als absolute Zeitachse „Tage bis kritisch“ (links = kritisch/überfällig, wie in der klassischen Eisenhower-Matrix; rechts = Spanne, Standard 14 Tage, als Einstellung; Stauchung mit Knick: erste Hälfte der Spanne linear auf 60 % der Breite, zweite Hälfte linear gestaucht auf 40 %; so ist der erste Tagesschritt nicht größer als die folgenden (eine Wurzelkurve hatte eine Lücke zwischen „heute kritisch“ und „morgen“); spätere und zeitlose Aufgaben am rechten Rand). Ein Tag ist so für alle Aufgaben gleich breit; die Farbe bleibt die relative Dringlichkeit, gestrichelte Mittellinie als Quadrantengrenze, Beschriftung der Wichtigkeit mittig an der Linie. Überlappende Blöcke rücken in weitere Unterzeilen derselben Zeile (`matrix.ts`). Kompakte Blöcke mit fester Breite, Titel max. 2 Zeilen.
+- ☑ Umschalten Raster ⇄ Matrix per Knopf oben in der Übersicht oder Befehl; jede Übersicht merkt sich ihre Darstellung (Workspace-Zustand).
 
 ---
 

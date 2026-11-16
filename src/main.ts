@@ -35,7 +35,7 @@ export default class MainPlugin extends Plugin {
 					editor: this.editor,
 					notes: this.notes,
 					undo: this.undo,
-					get_urgency_options: () => ({ curve_exponent: this.settings.curveExponent }),
+					get_settings: () => this.settings,
 				}),
 		);
 		this.addRibbonIcon('apple', t('command.open_overview'), () => this.open_overview());
@@ -45,6 +45,16 @@ export default class MainPlugin extends Plugin {
 			callback: () => this.open_overview(),
 		});
 		this.addCommand({ id: 'add-task', name: t('command.add_task'), callback: () => this.editor.add() });
+		this.addCommand({
+			id: 'toggle-layout',
+			name: t('command.toggle_layout'),
+			checkCallback: (checking) => {
+				const view = this.app.workspace.getActiveViewOfType(OverviewView);
+				if (!view) return false;
+				if (!checking) void view.toggle_layout();
+				return true;
+			},
+		});
 		this.addCommand({
 			id: 'undo-last',
 			name: t('command.undo'),

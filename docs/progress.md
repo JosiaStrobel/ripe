@@ -19,6 +19,10 @@ _Einzige Stelle für den Umsetzungsstand. Wird nach jeder Arbeitssitzung aktuali
 - [x] Rückgängig für Erledigt/Überspringen (2026-11-16, in Obsidian getestet): `undo.ts`, Meldung mit Knopf, Befehl `undo-last`
 - [x] Übersicht nach Farben gruppiert, eine Farbe pro Zeile (2026-11-16, in Obsidian getestet): `grouping.ts`; Blöcke deckend gefärbt mit fester Kontrast-Textfarbe pro Stufe (in Obsidian getestet)
 - [x] Einstellung Farbverlauf (2026-11-16, in Obsidian getestet): `color_scheme.ts`, Body-Klasse
+- [x] Etappe 7 vorgezogen: Matrix wichtig/dringend als Fläche, umschaltbar (2026-11-16, in Obsidian getestet): `matrix.ts` (reine Logik), `views/` aufgeteilt in `task_actions`, `task_block`, `grid_layout`, `matrix_layout`; Befehl `toggle-layout`; Zeitachse absolut „Tage bis kritisch“ mit Knick-Stauchung (60/40), Einstellung `matrixRangeDays`; Farben gedämpft über `--ripe-color-strength`
+- [x] Testwerkzeug Zeitregler (2026-11-16, in Obsidian getestet): Einstellung `showTimeSlider` (Standard aus), `views/time_slider.ts`, simuliert nur die Anzeige (−14 … +30 Tage); Testaufgaben in `Todos.md` ergänzt
+- [x] Ausgeblendete Aufgaben als eingeklappter Abschnitt im Raster (2026-11-16, in Obsidian getestet): `hidden_info` in `urgency.ts`, `views/format.ts`
+- [x] Pausieren / Pause aufheben im Menü (2026-11-16, in Obsidian getestet): `modals/pause_modal.ts`, `pause_line`/`unpause_line`, mit Rückgängig
 - [ ] Weitere Anzeigeformen der Übersicht zur Auswahl (Wunsch, später)
 - [ ] Etappe 5: Logs für wiederkehrende Aufgaben (Rückgängig muss dann auch den Log-Eintrag entfernen)
 - [x] Beispielbefehl und Beispiel-Einstellung ersetzt (2026-11-16)
@@ -32,6 +36,7 @@ _Einzige Stelle für den Umsetzungsstand. Wird nach jeder Arbeitssitzung aktuali
 - Beispiel-Datei `Todos.md` im Test-Vault `PluginDev` angelegt (alle Aufgabentypen + eine fehlerhafte Zeile).
 - Farbstufen fest auf 4 (`URGENCY_LEVELS`); stufenlose Darstellung als Einstellung kommt später.
 - Ein Wiki-Link im Titel außerhalb von Feldern gilt als Detail-Notiz und wird aus dem Titel entfernt.
+- Symbolnamen unterscheiden sich zwischen Obsidian-Versionen (z. B. `grid-2x2` fehlt): Kandidatenliste mit `getIcon()` prüfen (`pick_icon` in `overview_view.ts`).
 - Klicks nur über `addEventListener('click')`, nicht `onClickEvent` (reagiert auch auf Rechtsklick via `auxclick`).
 - Beim Bearbeiten wird der Titel vor die Felder gesetzt; Felder und Links behalten ihre Reihenfolge, Alias-Schreibweisen (`faellig`) werden zu `fällig`.
 - Einkaufslisten-Zeilen (`- Artikel`) werden vom Todo-Parser ignoriert; eigener Parser in Etappe 6.

@@ -97,3 +97,22 @@ export function urgency_level(urgency: Urgency): number | null {
 export function compare_urgency(a: Urgency, b: Urgency): number {
 	return b.u - a.u || b.overdue_days - a.overdue_days;
 }
+
+/** Why and until when an open task is hidden. */
+export interface HiddenInfo {
+	/** First day the task becomes visible. */
+	until: Day;
+	/** True if hidden by `pausiert_bis` (snooze), false if its window has not started. */
+	paused: boolean;
+}
+
+/** Hidden info for an open task on `today`; null if it is visible or done. */
+export function hidden_info(todo: Todo, today: Day): HiddenInfo | null {
+	if (todo.done) return null;
+	const paused = todo.paused_until !== null && today < todo.paused_until ? todo.paused_until : null;
+	const window = urgency_window(todo.timing, today);
+	const start = window && today < window.start ? window.start : null;
+	if (paused === null && start === null) return null;
+	if (start !== null && (paused === null || start > paused)) return { until: start, paused: false };
+	return { until: paused ?? today, paused: true };
+}

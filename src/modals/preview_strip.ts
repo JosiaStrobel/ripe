@@ -1,12 +1,7 @@
 import { t } from '../i18n';
-import { day_to_parts, type Day } from '../parser/date';
+import type { Day } from '../parser/date';
 import type { Preview } from '../preview';
-
-/** Short localized date, e.g. "24.11." or "11/24". */
-function short_date(day: Day): string {
-	const { month, day: dom } = day_to_parts(day);
-	return t('date.short', { day: dom, month });
-}
+import { short_date } from '../views/format';
 
 /** Render the color preview: one box per day; today, critical and due day marked. */
 export function render_preview_strip(el: HTMLElement, preview: Preview | null, today: Day): void {

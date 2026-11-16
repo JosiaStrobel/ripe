@@ -23,6 +23,12 @@ describe('parse_settings', () => {
 		expect(parse_settings({ noteCreator: 'other' }).noteCreator).toBe('ripe');
 	});
 
+	it('reads the matrix range within limits', () => {
+		expect(parse_settings({ matrixRangeDays: 21 }).matrixRangeDays).toBe(21);
+		expect(parse_settings({ matrixRangeDays: 365 }).matrixRangeDays).toBe(14);
+		expect(parse_settings({ matrixRangeDays: 7.5 }).matrixRangeDays).toBe(14);
+	});
+
 	it('reads the color scheme', () => {
 		expect(parse_settings({ colorScheme: 'blue_red' }).colorScheme).toBe('blue_red');
 		expect(parse_settings({ colorScheme: 'rainbow' }).colorScheme).toBe('green_red');
