@@ -1,0 +1,9 @@
+{
+	"id": "ripe",
+	"name": "Ripe",
+	"version": "0.1.0",
+	"minAppVersion": "1.13.0",
+	"description": "Todos that ripen: hidden until relevant, then increasingly urgent. Plus a quick shopping list.",
+	"author": "Josias Strobel",
+	"isDesktopOnly": false
+}

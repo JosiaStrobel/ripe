@@ -1,0 +1,106 @@
+/* Plugin styles; use Obsidian CSS variables only. */
+
+/* Urgency colors (level 0–3); themes can override these variables. */
+.ripe-overview {
+	--ripe-level-0-rgb: var(--color-green-rgb);
+	--ripe-level-1-rgb: var(--color-yellow-rgb);
+	--ripe-level-2-rgb: var(--color-orange-rgb);
+	--ripe-level-3-rgb: var(--color-red-rgb);
+	--ripe-level-none-rgb: var(--mono-rgb-100);
+}
+
+.ripe-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+	gap: var(--size-4-2);
+}
+
+.ripe-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--size-4-3);
+	padding: var(--size-4-8) var(--size-4-4);
+	color: var(--text-muted);
+	text-align: center;
+}
+
+.ripe-block {
+	--ripe-rgb: var(--ripe-level-none-rgb);
+	display: flex;
+	align-items: flex-start;
+	gap: var(--size-4-2);
+	min-height: 56px;
+	padding: var(--size-4-2) var(--size-4-2) var(--size-4-2) var(--size-4-3);
+	border-radius: var(--radius-m);
+	border-left: 4px solid rgba(var(--ripe-rgb), 0.9);
+	background-color: rgba(var(--ripe-rgb), 0.15);
+	cursor: pointer;
+	user-select: none;
+}
+
+.ripe-block:hover {
+	background-color: rgba(var(--ripe-rgb), 0.25);
+}
+
+.ripe-level-0 { --ripe-rgb: var(--ripe-level-0-rgb); }
+.ripe-level-1 { --ripe-rgb: var(--ripe-level-1-rgb); }
+.ripe-level-2 { --ripe-rgb: var(--ripe-level-2-rgb); }
+.ripe-level-3 { --ripe-rgb: var(--ripe-level-3-rgb); }
+.ripe-level-none { --ripe-rgb: var(--ripe-level-none-rgb); }
+
+.ripe-level-none {
+	border-left-color: var(--background-modifier-border);
+	background-color: var(--background-secondary);
+}
+
+.ripe-block-body {
+	flex: 1;
+	min-width: 0;
+}
+
+.ripe-block-title {
+	color: var(--text-normal);
+	overflow-wrap: anywhere;
+}
+
+.ripe-important .ripe-block-title {
+	font-weight: var(--font-bold);
+}
+
+.ripe-block-meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--size-4-2);
+	margin-top: var(--size-2-1);
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+}
+
+.ripe-overdue {
+	font-weight: var(--font-semibold);
+	color: rgb(var(--ripe-level-3-rgb));
+}
+
+.ripe-note-icon {
+	display: inline-flex;
+	--icon-size: var(--icon-xs);
+}
+
+.ripe-error {
+	flex-basis: 100%;
+	color: var(--text-error);
+}
+
+.ripe-invalid {
+	border-left-style: dashed;
+}
+
+/* Large touch target for the done button. */
+.ripe-done {
+	flex: none;
+	width: 40px;
+	height: 40px;
+	margin: calc(-1 * var(--size-2-2)) 0;
+}
