@@ -131,13 +131,13 @@ export class ShoppingView extends ItemView {
 			return;
 		}
 		for (const section of open) {
-			const list = this.render_section(el, section).createDiv({ cls: 'ripe-shop-list' });
-			for (const item of section.items) this.render_row(list, item);
+			const grid = this.render_section(el, section).createDiv({ cls: 'ripe-shop-tiles' });
+			for (const item of section.items) this.render_check_tile(grid, item);
 		}
 		if (checked.length > 0) {
-			const list = this.render_section(el, { name: t('shop.checked', { count: checked.length }), items: checked });
-			const rows = list.createDiv({ cls: 'ripe-shop-list' });
-			for (const item of checked) this.render_row(rows, item);
+			const section = { name: t('shop.checked', { count: checked.length }), items: checked };
+			const grid = this.render_section(el, section).createDiv({ cls: 'ripe-shop-tiles' });
+			for (const item of checked) this.render_check_tile(grid, item);
 		}
 		const finish = el.createEl('button', { cls: 'mod-cta ripe-shop-finish', text: t('shop.finish') });
 		finish.disabled = checked.length === 0;
@@ -151,15 +151,12 @@ export class ShoppingView extends ItemView {
 		return wrap;
 	}
 
-	/** One checklist row; tapping anywhere toggles between listed and checked. */
-	private render_row(list: HTMLElement, item: ShoppingItem): void {
+	/** Colored tile on the list; tapping toggles between listed and checked. */
+	private render_check_tile(grid: HTMLElement, item: ShoppingItem): void {
 		const checked = item.state === 'checked';
-		const row = list.createDiv({ cls: 'ripe-shop-row' });
-		row.toggleClass('is-checked', checked);
-		const box = row.createEl('input', { cls: 'ripe-shop-checkbox', attr: { type: 'checkbox' } });
-		box.checked = checked;
-		row.createSpan({ cls: 'ripe-shop-name', text: item.name });
-		row.addEventListener('click', () => void this.actions.set_state(item, checked ? 'listed' : 'checked'));
+		const tile = grid.createEl('button', { cls: 'ripe-shop-tile', text: item.name });
+		tile.toggleClass(checked ? 'is-checked' : 'is-listed', true);
+		tile.addEventListener('click', () => void this.actions.set_state(item, checked ? 'listed' : 'checked'));
 	}
 
 	/** Mode button shows the mode it switches to. */

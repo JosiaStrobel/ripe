@@ -244,7 +244,7 @@ Bedienung (Vorschlag):
 ### 7.2 Zwei Modi
 
 - **Planen:** Katalog als Raster mit großen Kacheln. Antippen nimmt einen Artikel in die Liste auf oder entfernt ihn.
-- **Einkaufen:** nur die aktuelle Liste mit großen Checkboxen, sortiert nach Laden-Reihenfolge.
+- **Einkaufen:** nur die aktuelle Liste als farbige Kacheln, nebeneinander innerhalb einer Kategorie, sortiert nach Laden-Reihenfolge. Antippen hakt ab (blass, durchgestrichen).
 
 ### 7.3 Datenformat (Vorschlag)
 

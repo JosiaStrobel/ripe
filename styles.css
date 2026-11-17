@@ -497,6 +497,8 @@
 .ripe-shop-tile {
 	min-height: 56px;
 	height: auto;
+	/* Halfway between the small radius and the theme's button radius. */
+	border-radius: calc((var(--radius-s) + var(--button-radius)) / 2);
 	padding: var(--size-4-2);
 	white-space: normal;
 	overflow-wrap: anywhere;
@@ -512,36 +514,11 @@
 	background-color: var(--interactive-accent-hover);
 }
 
-.ripe-shop-list {
-	display: flex;
-	flex-direction: column;
-}
-
-.ripe-shop-row {
-	display: flex;
-	align-items: center;
-	gap: var(--size-4-3);
-	min-height: 52px;
-	padding: var(--size-4-1) var(--size-4-2);
-	border-bottom: 1px solid var(--background-modifier-border);
-	cursor: pointer;
-	font-size: var(--font-ui-large);
-}
-
-.ripe-shop-row:hover {
-	background-color: var(--background-modifier-hover);
-}
-
-.ripe-shop-checkbox {
-	width: 28px;
-	height: 28px;
-	flex-shrink: 0;
-	pointer-events: none;
-}
-
-.ripe-shop-row.is-checked .ripe-shop-name {
+.ripe-shop-tile.is-checked {
+	background-color: var(--background-secondary);
 	color: var(--text-faint);
 	text-decoration: line-through;
+	box-shadow: none;
 }
 
 .ripe-shop-finish {
