@@ -36,9 +36,10 @@ export class ShoppingView extends ItemView {
 		private readonly actions: ShoppingActions,
 	) {
 		super(leaf);
-		this.toggle_el = this.addAction(TOGGLE.shop.icon, t(TOGGLE.shop.label), () => this.toggle_mode());
-		this.addAction('plus', t('command.add_item'), () => this.add_item());
+		// addAction inserts each button on the left, so add them right to left.
 		this.sort_el = this.addAction('arrow-up-down', t('shop.sort'), () => this.toggle_sorting());
+		this.addAction('plus', t('command.add_item'), () => this.add_item());
+		this.toggle_el = this.addAction(TOGGLE.shop.icon, t(TOGGLE.shop.label), () => this.toggle_mode());
 	}
 
 	getViewType(): string {

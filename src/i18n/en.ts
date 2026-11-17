@@ -151,11 +151,11 @@ const en = {
 	'settings.ai_folder.desc': 'Generated files for AI tools are kept here, one subfolder per plugin. A name starting with a dot keeps them hidden in Obsidian and out of Obsidian Sync; exclude it in other sync tools. Old files stay when the folder changes.',
 	'settings.ai_folder.invalid_empty': 'Enter a folder; the vault root is not allowed.',
 	'settings.ai_folder.invalid_conflict': 'A generated file would replace the todo or shopping file. Choose another folder.',
-	'settings.ai_tasks_file.name': 'Task file',
-	'settings.ai_tasks_file.desc': 'Keeps ripe/tasks.md in the folder for AI files up to date: format of the todo file and the state of all tasks today.',
-	'command.write_ai_tasks_file': 'Write task file for AI tools',
-	'notice.ai_tasks_file_written': 'Task file written: {path}',
-	'notice.ai_tasks_file_failed': 'Could not write the task file, see console.',
+	'settings.ai_format_file.name': 'Format file',
+	'settings.ai_format_file.desc': 'Keeps ripe/format.md in the folder for AI files up to date: explains the format of the todo and shopping files, without their content.',
+	'command.write_ai_format_file': 'Write format file for AI tools',
+	'notice.ai_format_file_written': 'Format file written: {path}',
+	'notice.ai_format_file_failed': 'Could not write the format file, see console.',
 } as const;
 
 export type MessageKey = keyof typeof en;

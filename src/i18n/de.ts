@@ -153,11 +153,11 @@ const de: Messages = {
 	'settings.ai_folder.desc': 'Hier liegen die erzeugten Dateien für KI-Werkzeuge, je Plugin ein Unterordner. Beginnt der Name mit einem Punkt, zeigt Obsidian sie nicht an und Obsidian Sync überträgt sie nicht; in anderen Sync-Werkzeugen ausschließen. Bei einem Wechsel bleiben alte Dateien liegen.',
 	'settings.ai_folder.invalid_empty': 'Ordner angeben; die Vault-Wurzel ist nicht erlaubt.',
 	'settings.ai_folder.invalid_conflict': 'Eine erzeugte Datei würde die Todo- oder Einkaufsdatei ersetzen. Anderen Ordner wählen.',
-	'settings.ai_tasks_file.name': 'Aufgabendatei',
-	'settings.ai_tasks_file.desc': 'Hält ripe/tasks.md im Ordner für KI-Dateien aktuell: Format der Todo-Datei und heutiger Stand aller Aufgaben.',
-	'command.write_ai_tasks_file': 'Aufgabendatei für KI-Werkzeuge schreiben',
-	'notice.ai_tasks_file_written': 'Aufgabendatei geschrieben: {path}',
-	'notice.ai_tasks_file_failed': 'Aufgabendatei konnte nicht geschrieben werden, siehe Konsole.',
+	'settings.ai_format_file.name': 'Formatdatei',
+	'settings.ai_format_file.desc': 'Hält ripe/format.md im Ordner für KI-Dateien aktuell: erklärt das Format von Todo- und Einkaufsdatei, ohne deren Inhalt.',
+	'command.write_ai_format_file': 'Formatdatei für KI-Werkzeuge schreiben',
+	'notice.ai_format_file_written': 'Formatdatei geschrieben: {path}',
+	'notice.ai_format_file_failed': 'Formatdatei konnte nicht geschrieben werden, siehe Konsole.',
 };
 
 export default de;

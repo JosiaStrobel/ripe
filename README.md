@@ -2,22 +2,22 @@
 
 Obsidian-Plugin. Todos that ripen: hidden until relevant, then increasingly urgent. Plus a quick shopping list.
 
-## Aufgabendatei für KI-Werkzeuge
+## Formatdatei für KI-Werkzeuge
 
-Alle Dateien für KI-Werkzeuge liegen im „Ordner für KI-Dateien“ (Einstellung, Standard `.ai-context/` in der Vault-Wurzel). Den Ordner teilen sich mehrere Plugins, jedes schreibt in einen eigenen Unterordner. Ist die Einstellung „Aufgabendatei“ an, hält Ripe dort `ripe/tasks.md` aktuell: kurze Erklärung des Zeilenformats und nur die für heute berechneten Werte (sichtbar mit Farbstufe, überfälligen Tagen und „kritisch ab“, ausgeblendet mit „sichtbar ab“, fehlerhafte Zeilen). Die Aufgaben selbst stehen nur in der Todo-Datei. Der Befehl „Aufgabendatei für KI-Werkzeuge schreiben“ schreibt sie auch bei ausgeschalteter Einstellung. Obsidian Sync überträgt Punkt-Ordner nicht.
+Alle Dateien für KI-Werkzeuge liegen im „Ordner für KI-Dateien“ (Einstellung, Standard `.ai-context/` in der Vault-Wurzel). Den Ordner teilen sich mehrere Plugins, jedes schreibt in einen eigenen Unterordner. Ist die Einstellung „Formatdatei“ an, hält Ripe dort `ripe/format.md` aktuell: Sie erklärt das Format von Todo- und Einkaufsdatei (Felder, wann eine Aufgabe sichtbar und rot wird, wie man Zeilen ändert), enthält aber keine Aufgaben. Der Befehl „Formatdatei für KI-Werkzeuge schreiben“ schreibt sie auch bei ausgeschalteter Einstellung. Obsidian Sync überträgt Punkt-Ordner nicht.
 
-Wird der Vault per Git synchronisiert und soll eine KI die Datei über das Repo lesen (z. B. Claude über GitHub), `.ai-context/` **nicht** in `.gitignore` aufnehmen. Jedes Gerät schreibt die Datei selbst. Der Inhalt ist deterministisch: Gleiche Aufgaben, gleicher Tag und gleiche Einstellungen ergeben dieselbe Datei. Deshalb müssen die Ripe-Einstellungen (`data.json`) auf allen Geräten gleich sein. Gegen Konflikte gehört in die `.gitattributes` des Vaults `.ai-context/** merge=union`; eine dabei zusammengeführte Datei ersetzt Ripe beim nächsten Schreiben. Wer die Datei nicht teilen will, schließt `.ai-context/` in `.gitignore` bzw. `.stignore` aus.
+Wird der Vault per Git synchronisiert und soll eine KI die Datei über das Repo lesen (z. B. Claude über GitHub), `.ai-context/` **nicht** in `.gitignore` aufnehmen. Jedes Gerät schreibt die Datei selbst; der Inhalt hängt nur von Plugin-Version und Einstellungen ab und ändert sich daher selten. Gegen Konflikte gehört in die `.gitattributes` des Vaults `.ai-context/** merge=union`; eine dabei zusammengeführte Datei ersetzt Ripe beim nächsten Schreiben. Wer die Datei nicht teilen will, schließt `.ai-context/` in `.gitignore` bzw. `.stignore` aus. Eine ältere `.ai-context/ripe/tasks.md` (frühere Entwicklungsversion) kann gelöscht werden.
 
 Damit eine KI die Datei findet, in die `CLAUDE.md` bzw. `AGENTS.md` des Vaults eintragen (das Plugin schreibt sie nicht selbst):
 
 ```markdown
-## Aufgaben (Plugin Ripe)
+## Aufgaben und Einkaufsliste (Plugin Ripe)
 
-Aufgaben stehen in `Todos.md`, eine Zeile pro Aufgabe mit Feldern wie `[fällig:: 2026-12-01]`.
-Was heute sichtbar, dringend oder ausgeblendet ist (vom Plugin berechnet), steht in `.ai-context/ripe/tasks.md` (versteckter Ordner, wird automatisch erzeugt). Diese Datei
-zuerst lesen und nie bearbeiten; geändert werden Aufgaben nur in `Todos.md`. Sie kann gegenüber
-den neuesten Commits veraltet sein (aktualisiert wird sie erst beim nächsten Sync von einem Gerät
-mit Obsidian); ist `Todos.md` neuer, den Stand direkt dort ablesen.
+Aufgaben stehen in `Todos.md`, eine Zeile pro Aufgabe mit Feldern wie `[fällig:: 2026-12-01]`;
+die Einkaufsliste in `Einkaufen.md`. Das Format (Felder, wann eine Aufgabe sichtbar und dringend
+wird, wie man Zeilen ändert) erklärt `.ai-context/ripe/format.md` (versteckter Ordner, wird
+automatisch erzeugt). Diese Datei vor dem Lesen oder Ändern der Listen lesen und nie bearbeiten.
+Den aktuellen Stand immer direkt aus `Todos.md` bzw. `Einkaufen.md` ablesen.
 ```
 
 ## Entwicklung

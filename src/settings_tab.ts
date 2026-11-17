@@ -1,6 +1,6 @@
 import { type App, PluginSettingTab, type SettingDefinitionItem } from 'obsidian';
 import { ai_folder_issue } from './ai/folder';
-import { TASKS_EXPORT_NAME } from './ai/tasks_export';
+import { FORMAT_EXPORT_NAME } from './ai/format_export';
 import { t } from './i18n';
 import { moc_tree_api } from './integrations/moc_tree';
 import type MainPlugin from './main';
@@ -143,9 +143,9 @@ export class SettingsTab extends PluginSettingTab {
 						},
 					},
 					{
-						name: t('settings.ai_tasks_file.name'),
-						desc: t('settings.ai_tasks_file.desc'),
-						control: { type: 'toggle', key: 'aiTasksFile', defaultValue: DEFAULT_SETTINGS.aiTasksFile },
+						name: t('settings.ai_format_file.name'),
+						desc: t('settings.ai_format_file.desc'),
+						control: { type: 'toggle', key: 'aiFormatFile', defaultValue: DEFAULT_SETTINGS.aiFormatFile },
 					},
 				],
 			},
@@ -155,7 +155,7 @@ export class SettingsTab extends PluginSettingTab {
 	/** Error text for an unusable AI folder. */
 	private validate_ai_folder(value: string): string | undefined {
 		const { todoFile, shoppingFile } = this.plugin.settings;
-		const issue = ai_folder_issue(value, [TASKS_EXPORT_NAME], [todoFile, shoppingFile]);
+		const issue = ai_folder_issue(value, [FORMAT_EXPORT_NAME], [todoFile, shoppingFile]);
 		if (issue === 'empty') return t('settings.ai_folder.invalid_empty');
 		if (issue === 'conflict') return t('settings.ai_folder.invalid_conflict');
 		return undefined;

@@ -2,7 +2,7 @@ import { clean_folder_path, DEFAULT_AI_FOLDER } from './ai/folder';
 import { parse_duration } from './parser/duration';
 
 /** Current version of the stored settings format. */
-export const SETTINGS_SCHEMA_VERSION = 4;
+export const SETTINGS_SCHEMA_VERSION = 5;
 
 /** Plugin settings as stored in data.json. */
 export interface PluginSettings {
@@ -27,8 +27,8 @@ export interface PluginSettings {
 	showTimeSlider: boolean;
 	/** Shared folder for generated AI helper files (one subfolder per plugin); never empty. */
 	aiFolder: string;
-	/** Keep `<aiFolder>/ripe/tasks.md` up to date for AI tools. */
-	aiTasksFile: boolean;
+	/** Keep `<aiFolder>/ripe/format.md` (file formats) up to date for AI tools. */
+	aiFormatFile: boolean;
 }
 
 /** Available color gradients (CSS class `ripe-scheme-<name>`). */
@@ -52,7 +52,7 @@ export const DEFAULT_SETTINGS: Readonly<PluginSettings> = {
 	matrixRangeDays: 14,
 	showTimeSlider: false,
 	aiFolder: DEFAULT_AI_FOLDER,
-	aiTasksFile: false,
+	aiFormatFile: false,
 };
 
 export const MATRIX_RANGE_MIN = 3;
@@ -87,7 +87,8 @@ export function parse_settings(raw: unknown): PluginSettings {
 	const settings: PluginSettings = { ...DEFAULT_SETTINGS };
 	if (!is_record(raw)) return settings;
 	// Version 1 only had the template's example flag, version 3 added shoppingFile, version 4
-	// aiFolder and aiTasksFile; missing values get their defaults, nothing else to migrate.
+	// aiFolder and aiTasksFile, version 5 replaced aiTasksFile (computed state) by aiFormatFile;
+	// missing values get their defaults.
 	settings.todoFile = normalize_md_file(raw.todoFile) ?? settings.todoFile;
 	settings.shoppingFile = normalize_md_file(raw.shoppingFile) ?? settings.shoppingFile;
 	const importance = number_in(raw.defaultImportance, 1, 3);
@@ -102,7 +103,8 @@ export function parse_settings(raw: unknown): PluginSettings {
 	if (typeof raw.aiFolder === 'string' && clean_folder_path(raw.aiFolder) !== '') {
 		settings.aiFolder = clean_folder_path(raw.aiFolder);
 	}
-	if (typeof raw.aiTasksFile === 'boolean') settings.aiTasksFile = raw.aiTasksFile;
+	const format_file = raw.aiFormatFile ?? raw.aiTasksFile;
+	if (typeof format_file === 'boolean') settings.aiFormatFile = format_file;
 	settings.colorScheme = COLOR_SCHEMES.find((c) => c === raw.colorScheme) ?? settings.colorScheme;
 	settings.noteCreator = NOTE_CREATORS.find((c) => c === raw.noteCreator) ?? settings.noteCreator;
 	return settings;

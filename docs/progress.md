@@ -13,13 +13,12 @@ _Aktueller Stand, kurz gehalten. Details erledigter Schritte und ältere Notizen
 - [x] Etappe 7 (vorgezogen): Matrix wichtig/dringend, umschaltbar, Blöcke auf Raster
 - [x] Testwerkzeug Zeitregler
 - [x] Etappe 6: Einkaufsliste (Planen/Einkaufen, Sortiermodus für Kategorien)
-- [x] Formatdatei für KI-Werkzeuge (`format.md`) – noch nicht in Obsidian getestet
+- [x] Formatdatei für KI-Werkzeuge (`format.md`)
 - [ ] Etappe 5: Logs für wiederkehrende Aufgaben
 
 ## Nächste Schritte
 
-1. `format.md` (KI-Formatdatei) in Obsidian testen.
-2. Etappe 5 (Logs); Rückgängig muss dann auch den Log-Eintrag entfernen.
+1. Etappe 5 (Logs); Rückgängig muss dann auch den Log-Eintrag entfernen.
 
 ## Offene Punkte und Ideen
 
@@ -35,4 +34,4 @@ _Aktueller Stand, kurz gehalten. Details erledigter Schritte und ältere Notizen
 
 - Beispiel-Datei `Todos.md` im Test-Vault `PluginDev` angelegt (alle Aufgabentypen + eine fehlerhafte Zeile).
 - Beispiel-Datei `Einkaufen.md` im Test-Vault angelegt.
-- KI-Datei umgestellt: statt `tasks.md` mit berechnetem Stand jetzt `format.md` mit Formatbeschreibung (Schema 5); Umbau noch nicht committet.
+- KI-Datei umgestellt: statt `tasks.md` mit berechnetem Stand jetzt `format.md` mit Formatbeschreibung (Schema 5); in Obsidian getestet.

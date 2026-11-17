@@ -41,13 +41,19 @@ describe('parse_settings', () => {
 	});
 
 	it('migrates version 3 by adding the AI folder and cleans it', () => {
-		expect(parse_settings({ schemaVersion: 3 })).toMatchObject({ aiFolder: '.ai-context', aiTasksFile: false });
-		expect(parse_settings({ aiFolder: ' /Meta\\.ki/ ', aiTasksFile: true })).toMatchObject({
+		expect(parse_settings({ schemaVersion: 3 })).toMatchObject({ aiFolder: '.ai-context', aiFormatFile: false });
+		expect(parse_settings({ aiFolder: ' /Meta\\.ki/ ', aiFormatFile: true })).toMatchObject({
 			aiFolder: 'Meta/.ki',
-			aiTasksFile: true,
+			aiFormatFile: true,
 		});
 		expect(parse_settings({ aiFolder: ' / ' }).aiFolder).toBe('.ai-context');
 		expect(parse_settings({ aiFolder: 3 }).aiFolder).toBe('.ai-context');
+	});
+
+	it('migrates version 4 by taking over the task file switch', () => {
+		expect(parse_settings({ schemaVersion: 4, aiTasksFile: true }).aiFormatFile).toBe(true);
+		expect(parse_settings({ aiTasksFile: true, aiFormatFile: false }).aiFormatFile).toBe(false);
+		expect(parse_settings({ aiTasksFile: true })).not.toHaveProperty('aiTasksFile');
 	});
 
 	it('drops invalid values', () => {
