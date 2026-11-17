@@ -1,13 +1,15 @@
 import { parse_duration } from './parser/duration';
 
 /** Current version of the stored settings format. */
-export const SETTINGS_SCHEMA_VERSION = 2;
+export const SETTINGS_SCHEMA_VERSION = 3;
 
 /** Plugin settings as stored in data.json. */
 export interface PluginSettings {
 	schemaVersion: number;
 	/** Vault path of the todo file. */
 	todoFile: string;
+	/** Vault path of the shopping list file. */
+	shoppingFile: string;
 	/** Importance for lines without `wichtig` (1–3). */
 	defaultImportance: number;
 	/** Urgency curve exponent k (u' = u^k); 1 = linear. */
@@ -36,6 +38,7 @@ export const NOTE_CREATORS: readonly NoteCreator[] = ['ripe', 'moc_tree', 'moc_t
 export const DEFAULT_SETTINGS: Readonly<PluginSettings> = {
 	schemaVersion: SETTINGS_SCHEMA_VERSION,
 	todoFile: 'Todos.md',
+	shoppingFile: 'Einkaufen.md',
 	defaultImportance: 2,
 	curveExponent: 1,
 	quickDuration: '1w',
@@ -64,8 +67,8 @@ function number_in(value: unknown, min: number, max: number): number | undefined
 	return typeof value === 'number' && value >= min && value <= max ? value : undefined;
 }
 
-/** Normalize a todo file path: trimmed, ".md" appended; undefined if empty. */
-export function normalize_todo_file(value: unknown): string | undefined {
+/** Normalize a markdown file path: trimmed, ".md" appended; undefined if empty. */
+export function normalize_md_file(value: unknown): string | undefined {
 	if (typeof value !== 'string') return undefined;
 	const path = value.trim().replace(/^\/+/, '');
 	if (path.length === 0) return undefined;
@@ -76,8 +79,10 @@ export function normalize_todo_file(value: unknown): string | undefined {
 export function parse_settings(raw: unknown): PluginSettings {
 	const settings: PluginSettings = { ...DEFAULT_SETTINGS };
 	if (!is_record(raw)) return settings;
-	// Version 1 only had the template's example flag; nothing to migrate.
-	settings.todoFile = normalize_todo_file(raw.todoFile) ?? settings.todoFile;
+	// Version 1 only had the template's example flag, version 3 added shoppingFile;
+	// missing values get their defaults, nothing else to migrate.
+	settings.todoFile = normalize_md_file(raw.todoFile) ?? settings.todoFile;
+	settings.shoppingFile = normalize_md_file(raw.shoppingFile) ?? settings.shoppingFile;
 	const importance = number_in(raw.defaultImportance, 1, 3);
 	if (importance !== undefined && Number.isInteger(importance)) settings.defaultImportance = importance;
 	settings.curveExponent = number_in(raw.curveExponent, CURVE_MIN, CURVE_MAX) ?? settings.curveExponent;

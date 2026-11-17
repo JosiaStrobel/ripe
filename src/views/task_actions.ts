@@ -147,7 +147,11 @@ export class TaskActions {
 	private async apply(entry: TodoEntry, replacement: string, message: string): Promise<void> {
 		try {
 			if (await this.services.store.update_line(entry, replacement)) {
-				this.services.undo.record(entry.line_no, entry.todo.raw, replacement, message);
+				this.services.undo.record(
+					this.services.store,
+					[{ line_no: entry.line_no, before: entry.todo.raw, after: replacement }],
+					message,
+				);
 			} else {
 				new Notice(t('notice.line_changed'));
 			}

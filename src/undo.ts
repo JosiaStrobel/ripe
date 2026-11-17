@@ -1,35 +1,32 @@
 import { Notice } from 'obsidian';
 import { t } from './i18n';
-import type { TodoStore } from './store';
+import { invert_changes, type LineChange } from './line_changes';
+import type { VaultFile } from './vault_file';
 
 const UNDO_NOTICE_MS = 8000;
 
-/** A line change that can be reverted. */
+/** Line changes in one file that can be reverted together. */
 interface Change {
-	line_no: number;
-	before: string;
-	after: string;
+	target: VaultFile;
+	changes: LineChange[];
 }
 
-/** One-step undo for completing or skipping a task. */
+/** One-step undo for line changes (completing a task, finishing a shopping trip …). */
 export class UndoManager {
 	private last: Change | null = null;
 	private notice: Notice | null = null;
 
-	/** Create the manager for a store; `on_change` redraws after an undo. */
-	constructor(
-		private readonly store: TodoStore,
-		private readonly on_change: () => void,
-	) {}
+	/** Create the manager; `on_change` redraws after an undo. */
+	constructor(private readonly on_change: () => void) {}
 
 	/** True if there is a change to undo. */
 	get can_undo(): boolean {
 		return this.last !== null;
 	}
 
-	/** Remember a change and offer to undo it in a notice. */
-	record(line_no: number, before: string, after: string, message: string): void {
-		this.last = { line_no, before, after };
+	/** Remember applied changes and offer to undo them in a notice. */
+	record(target: VaultFile, changes: LineChange[], message: string): void {
+		this.last = { target, changes };
 		this.notice?.hide();
 		const fragment = createFragment((f) => {
 			f.createSpan({ text: message });
@@ -42,7 +39,7 @@ export class UndoManager {
 		this.notice = new Notice(fragment, UNDO_NOTICE_MS);
 	}
 
-	/** Restore the line, but only if it still has the text the change left. */
+	/** Restore the lines, but only if they still have the text the change left. */
 	async undo(): Promise<void> {
 		const change = this.last;
 		this.last = null;
@@ -50,7 +47,7 @@ export class UndoManager {
 		this.notice = null;
 		if (!change) return;
 		try {
-			const ok = await this.store.replace_line_text(change.line_no, change.after, change.before);
+			const ok = await change.target.replace_lines(invert_changes(change.changes));
 			if (!ok) new Notice(t('notice.undo_failed'));
 		} catch (error) {
 			console.error('Ripe: undo failed', error);

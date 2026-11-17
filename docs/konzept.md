@@ -271,6 +271,10 @@ Eine Datei `Einkaufen.md`. Die Überschriften sind Kategorien in der Reihenfolge
 | `- [x] Artikel` | abgehakt |
 
 - `gekauft` zählt mit, wie oft ein Artikel gekauft wurde. Häufige Artikel stehen im Planen-Modus oben.
+- `gekauft` zählt erst bei „Einkauf fertig“ hoch, nicht schon beim Abhaken. So verfälscht versehentliches Abhaken den Zähler nicht. „Einkauf fertig“ lässt sich rückgängig machen.
+- Nur Listenpunkte ohne Einrückung sind Artikel; anderer Text, eingerückte Punkte, Frontmatter und Codeblöcke bleiben unberührt. Artikel vor der ersten Überschrift gelten als „Ohne Kategorie“.
+- Im Einkaufen-Modus stehen abgehakte Artikel gesammelt ganz am Ende („Im Wagen“).
+- Ein neuer Artikel landet direkt auf der Liste (`- [ ]`) am Ende seiner Kategorie; eine neue Kategorie wird als `##`-Überschrift am Dateiende angelegt. Gibt es den Namen schon (ohne Groß-/Kleinschreibung), wird der vorhandene Artikel auf die Liste gesetzt statt doppelt angelegt.
 - Die Kategorien auch in der Ansicht neu sortierbar machen (Drag & Drop).
 
 ### 7.4 Ideen für später
@@ -317,7 +321,7 @@ Eine Datei `Einkaufen.md`. Die Überschriften sind Kategorien in der Reihenfolge
 - ☑ **Toleranz:** Pflichtfeld pro Aufgabe bei `alle`; ohne `toleranz` ist die Zeile ungültig (wird als Fehler angezeigt). Der Eingabe-Dialog schlägt ½ Intervall vor.
 - ☑ **Überfällig:** Rot ist das Maximum der Farbe; zusätzlich Anzeige der überfälligen Tage, die auch die Sortierung bestimmen. `urgency` liefert dafür `overdue_days`.
 - ☑ **Erledigte Einmal-Aufgaben:** bleiben als `- [x] … [erledigt:: JJJJ-MM-TT]` stehen. Ein späterer Befehl kann sie in eine Archiv-Datei verschieben.
-- ☐ **Ein Plugin oder zwei?** Todos und Einkaufsliste teilen sich wenig Logik. Ein gemeinsames Plugin wäre praktisch, wenn beides auf einem Bildschirm erscheinen soll.
+- ☑ **Ein Plugin oder zwei?** Ein Plugin: Die Einkaufsliste ist Teil von Ripe und hat eine eigene Ansicht. Dateizugriff und Rückgängig werden gemeinsam genutzt.
 - ☑ **Kalenderregeln für `jeden`:** erste Version kennt Wochentage (`dienstag`, `mo, do`) und Monatstag (`monatlich 1`). Weitere Formen („jeden 2. Montag“, jährlich) später; der Parser wird dafür erweiterbar gebaut.
 - ☑ **Layout der Übersicht:** vorerst responsives Raster (auf dem Handy einspaltig), absteigend nach Dringlichkeit. Pro Farbstufe ein eigenes Raster (Rot, Orange, Gelb, Grün, ohne Zeit): jede Farbe beginnt in einer neuen Zeile, Farben mischen sich nie in einer Zeile. Später weitere Anzeigeformen zur Auswahl (z. B. ungruppiertes Raster, Liste, Matrix). Andere Layouts später möglich.
 

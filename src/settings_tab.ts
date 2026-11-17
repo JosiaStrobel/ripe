@@ -8,7 +8,7 @@ import {
 	CURVE_MIN,
 	MATRIX_RANGE_MAX,
 	MATRIX_RANGE_MIN,
-	normalize_todo_file,
+	normalize_md_file,
 	parse_settings,
 } from './settings';
 
@@ -32,7 +32,18 @@ export class SettingsTab extends PluginSettingTab {
 					key: 'todoFile',
 					placeholder: 'Todos.md',
 					filter: (file) => file.extension === 'md',
-					validate: (value) => (normalize_todo_file(value) ? undefined : t('settings.todo_file.desc')),
+					validate: (value) => (normalize_md_file(value) ? undefined : t('settings.todo_file.desc')),
+				},
+			},
+			{
+				name: t('settings.shopping_file.name'),
+				desc: t('settings.shopping_file.desc'),
+				control: {
+					type: 'file',
+					key: 'shoppingFile',
+					placeholder: 'Einkaufen.md',
+					filter: (file) => file.extension === 'md',
+					validate: (value) => (normalize_md_file(value) ? undefined : t('settings.shopping_file.desc')),
 				},
 			},
 			{
