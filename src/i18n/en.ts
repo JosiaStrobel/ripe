@@ -141,6 +141,11 @@ const en = {
 	'modal.category': 'Category',
 	'modal.new_category': 'New category …',
 	'modal.category_name': 'Name of the new category',
+	'shop.sort': 'Sort categories',
+	'shop.sort_hint': 'Order of the categories as you walk through the store.',
+	'shop.sort_done': 'Done',
+	'shop.move_up': 'Move up',
+	'shop.move_down': 'Move down',
 } as const;
 
 export type MessageKey = keyof typeof en;

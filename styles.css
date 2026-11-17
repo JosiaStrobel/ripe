@@ -541,3 +541,47 @@
 .ripe-quick-input.ripe-hidden {
 	display: none;
 }
+
+.ripe-sort-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-4-2);
+}
+
+.ripe-sort-row {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-2);
+	padding: var(--size-4-1) var(--size-4-1) var(--size-4-1) var(--size-4-3);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: calc((var(--radius-s) + var(--button-radius)) / 2);
+	background-color: var(--background-secondary);
+}
+
+.ripe-sort-name {
+	flex: 1;
+	display: flex;
+	align-items: baseline;
+	gap: var(--size-4-2);
+	min-width: 0;
+	font-size: var(--font-ui-medium);
+}
+
+.ripe-sort-count {
+	color: var(--text-faint);
+	font-size: var(--font-ui-small);
+}
+
+.ripe-sort-button {
+	width: 48px;
+	height: 44px;
+	padding: 0;
+}
+
+.ripe-sort-button:disabled {
+	opacity: 0.3;
+}
+
+.workspace-leaf-content[data-type="ripe-shopping"] .view-action.is-active {
+	color: var(--interactive-accent);
+}

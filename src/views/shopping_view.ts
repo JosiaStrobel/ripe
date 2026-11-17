@@ -25,7 +25,10 @@ export class ShoppingView extends ItemView {
 	/** Category of the last added item, preselected next time. */
 	private last_category = '';
 	private categories: ShoppingCategory[] = [];
+	/** Sort mode: categories with up/down buttons instead of items; not stored. */
+	private sorting = false;
 	private readonly toggle_el: HTMLElement;
+	private readonly sort_el: HTMLElement;
 
 	/** Create the view for a leaf. */
 	constructor(
@@ -35,6 +38,7 @@ export class ShoppingView extends ItemView {
 		super(leaf);
 		this.toggle_el = this.addAction(TOGGLE.shop.icon, t(TOGGLE.shop.label), () => this.toggle_mode());
 		this.addAction('plus', t('command.add_item'), () => this.add_item());
+		this.sort_el = this.addAction('arrow-up-down', t('shop.sort'), () => this.toggle_sorting());
 	}
 
 	getViewType(): string {
@@ -74,6 +78,13 @@ export class ShoppingView extends ItemView {
 		await this.render();
 	}
 
+	/** Enter or leave the sort mode for categories. */
+	async toggle_sorting(): Promise<void> {
+		this.sorting = !this.sorting;
+		this.sort_el.toggleClass('is-active', this.sorting);
+		await this.render();
+	}
+
 	/** Open the dialog for a new item. */
 	add_item(): void {
 		new AddItemModal(this.app, {
@@ -99,7 +110,8 @@ export class ShoppingView extends ItemView {
 			return;
 		}
 		this.categories = categories;
-		if (this.mode === 'plan') this.render_plan(el, categories);
+		if (this.sorting) this.render_sorting(el, categories);
+		else if (this.mode === 'plan') this.render_plan(el, categories);
 		else this.render_shop(el, categories);
 	}
 
@@ -142,6 +154,31 @@ export class ShoppingView extends ItemView {
 		const finish = el.createEl('button', { cls: 'mod-cta ripe-shop-finish', text: t('shop.finish') });
 		finish.disabled = checked.length === 0;
 		finish.addEventListener('click', () => void this.actions.finish(categories));
+	}
+
+	/** Categories in store order with up/down buttons; items without a category stay on top. */
+	private render_sorting(el: HTMLElement, categories: readonly ShoppingCategory[]): void {
+		const named = categories.filter((c) => c.line_no !== null);
+		el.createDiv({ cls: 'ripe-shop-summary', text: t('shop.sort_hint') });
+		const list = el.createDiv({ cls: 'ripe-sort-list' });
+		named.forEach((category, i) => {
+			const row = list.createDiv({ cls: 'ripe-sort-row' });
+			const label = row.createDiv({ cls: 'ripe-sort-name' });
+			label.createSpan({ text: category.name || t('shop.uncategorized') });
+			label.createSpan({ cls: 'ripe-sort-count', text: String(category.items.length) });
+			const moves: Array<[-1 | 1, string, string]> = [
+				[-1, 'arrow-up', t('shop.move_up')],
+				[1, 'arrow-down', t('shop.move_down')],
+			];
+			for (const [direction, icon, label_text] of moves) {
+				const button = row.createEl('button', { cls: 'ripe-sort-button', attr: { 'aria-label': label_text } });
+				setIcon(button, icon);
+				button.disabled = i + direction < 0 || i + direction >= named.length;
+				button.addEventListener('click', () => void this.actions.move(category.name, direction));
+			}
+		});
+		const done = el.createEl('button', { cls: 'mod-cta ripe-shop-finish', text: t('shop.sort_done') });
+		done.addEventListener('click', () => void this.toggle_sorting());
 	}
 
 	/** Section container with its heading. */

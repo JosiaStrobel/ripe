@@ -3,6 +3,7 @@ import { t } from '../i18n';
 import type { LineChange } from '../line_changes';
 import type { UndoManager } from '../undo';
 import { finish_changes, find_item, insert_item, new_item_line, state_change } from './actions';
+import { move_in_order } from './order';
 import type { ItemState, ShoppingCategory, ShoppingItem } from './parser';
 import type { ShoppingStore } from './store';
 
@@ -42,6 +43,20 @@ export class ShoppingActions {
 			await this.store.process((content) => insert_item(content, category, new_item_line(name)));
 		} catch (error) {
 			console.error('Ripe: failed to add shopping item', error);
+			new Notice(t('notice.write_failed'));
+		}
+		this.on_change();
+	}
+
+	/** Move a category one place up (-1) or down (+1) in the store order (frontmatter only). */
+	async move(name: string, direction: -1 | 1): Promise<void> {
+		try {
+			const categories = (await this.store.load()) ?? [];
+			const names = categories.filter((c) => c.line_no !== null).map((c) => c.name);
+			const order = move_in_order(names, name, direction);
+			if (order) await this.store.save_order(order);
+		} catch (error) {
+			console.error('Ripe: failed to save category order', error);
 			new Notice(t('notice.write_failed'));
 		}
 		this.on_change();

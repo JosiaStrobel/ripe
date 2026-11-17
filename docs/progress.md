@@ -25,7 +25,7 @@ _Einzige Stelle für den Umsetzungsstand. Wird nach jeder Arbeitssitzung aktuali
 - [x] Pausieren / Pause aufheben im Menü (2026-11-16, in Obsidian getestet): `modals/pause_modal.ts`, `pause_line`/`unpause_line`, mit Rückgängig
 - [x] Matrix: Blöcke auf ⅕-Raster, bis ⅓ Blockbreite Abweichung für dichtere Unterzeilen (`place_blocks`) (2026-11-16, in Obsidian getestet)
 - [x] Etappe 6: Einkaufsliste (2026-11-17, in Obsidian getestet): `shopping/parser.ts`, `shopping/actions.ts`, `shopping/sections.ts` (reine Logik mit Tests), `shopping/store.ts`, `shopping/shopping_actions.ts`, `views/shopping_view.ts` (Planen: Kacheln, Einkaufen: farbige Kacheln je Kategorie, „Einkauf fertig“ mit Rückgängig), `modals/add_item_modal.ts`; Einstellung `shoppingFile` (Schema 3); Befehle `open-shopping`, `add-shopping-item`, `toggle-shopping-mode`. Gemeinsamer Dateizugriff `vault_file.ts`, Rückgängig für mehrere Zeilen (`line_changes.ts`)
-- [ ] Einkaufsliste: Kategorien per Drag & Drop umsortieren
+- [x] Einkaufsliste: Sortiermodus für Kategorien mit ↑/↓ (2026-11-17, in Obsidian getestet): Reihenfolge als `reihenfolge` in der Frontmatter (`shopping/order.ts`), Überschriften bleiben in der Datei, wo sie sind
 - [ ] Weitere Anzeigeformen der Übersicht zur Auswahl (Wunsch, später)
 - [ ] Etappe 5: Logs für wiederkehrende Aufgaben (Rückgängig muss dann auch den Log-Eintrag entfernen)
 - [x] Beispielbefehl und Beispiel-Einstellung ersetzt (2026-11-16)
@@ -47,4 +47,4 @@ _Einzige Stelle für den Umsetzungsstand. Wird nach jeder Arbeitssitzung aktuali
 
 ## Nächster Schritt
 
-Drag & Drop der Kategorien oder Etappe 5 (Logs).
+Etappe 5 (Logs).

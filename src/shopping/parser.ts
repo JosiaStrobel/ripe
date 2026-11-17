@@ -8,6 +8,9 @@ import { find_field, strip_fields } from '../parser/fields';
 /** Field keys as written in the file. */
 export const SHOPPING_FIELD = { bought: 'gekauft' } as const;
 
+/** Frontmatter key with the category order (store order). */
+export const ORDER_KEY = 'reihenfolge';
+
 /** `- Item` = catalog only, `- [ ] Item` = on the list, `- [x] Item` = checked off. */
 export type ItemState = 'catalog' | 'listed' | 'checked';
 

@@ -275,7 +275,7 @@ Eine Datei `Einkaufen.md`. Die Überschriften sind Kategorien in der Reihenfolge
 - Nur Listenpunkte ohne Einrückung sind Artikel; anderer Text, eingerückte Punkte, Frontmatter und Codeblöcke bleiben unberührt. Artikel vor der ersten Überschrift gelten als „Ohne Kategorie“.
 - Im Einkaufen-Modus stehen abgehakte Artikel gesammelt ganz am Ende („Im Wagen“).
 - Ein neuer Artikel landet direkt auf der Liste (`- [ ]`) am Ende seiner Kategorie; eine neue Kategorie wird als `##`-Überschrift am Dateiende angelegt. Gibt es den Namen schon (ohne Groß-/Kleinschreibung), wird der vorhandene Artikel auf die Liste gesetzt statt doppelt angelegt.
-- Die Kategorien auch in der Ansicht neu sortierbar machen (Drag & Drop).
+- Die Kategorien lassen sich in der Ansicht neu sortieren: Ein Sortiermodus (Knopf in der Kopfzeile) zeigt die Kategorien mit großen ↑/↓-Knöpfen. Diese Lösung ist touchfreundlicher als Drag & Drop. Die Reihenfolge steht als Liste in der Frontmatter (`reihenfolge: [Kühlregal, Obst & Gemüse, …]`); die Überschriften in der Datei bleiben, wo sie sind. So ändert Sortieren nur eine Zeile, was Git-Konflikte vermeidet, und später sind Reihenfolgen pro Laden möglich. Kategorien, die nicht in der Liste stehen (neu oder umbenannt), folgen in Datei-Reihenfolge am Ende. Artikel ohne Kategorie bleiben oben.
 
 ### 7.4 Ideen für später
 

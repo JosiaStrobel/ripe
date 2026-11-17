@@ -143,6 +143,11 @@ const de: Messages = {
 	'modal.category': 'Kategorie',
 	'modal.new_category': 'Neue Kategorie …',
 	'modal.category_name': 'Name der neuen Kategorie',
+	'shop.sort': 'Kategorien sortieren',
+	'shop.sort_hint': 'Reihenfolge der Kategorien wie beim Gang durch den Laden.',
+	'shop.sort_done': 'Fertig',
+	'shop.move_up': 'Nach oben',
+	'shop.move_down': 'Nach unten',
 };
 
 export default de;
