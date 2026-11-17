@@ -146,6 +146,16 @@ const en = {
 	'shop.sort_done': 'Done',
 	'shop.move_up': 'Move up',
 	'shop.move_down': 'Move down',
+	'settings.group.ai': 'AI tools',
+	'settings.ai_folder.name': 'Folder for AI files',
+	'settings.ai_folder.desc': 'Generated files for AI tools are kept here, one subfolder per plugin. A name starting with a dot keeps them hidden in Obsidian and out of Obsidian Sync; exclude it in other sync tools. Old files stay when the folder changes.',
+	'settings.ai_folder.invalid_empty': 'Enter a folder; the vault root is not allowed.',
+	'settings.ai_folder.invalid_conflict': 'A generated file would replace the todo or shopping file. Choose another folder.',
+	'settings.ai_tasks_file.name': 'Task file',
+	'settings.ai_tasks_file.desc': 'Keeps ripe/tasks.md in the folder for AI files up to date: format of the todo file and the state of all tasks today.',
+	'command.write_ai_tasks_file': 'Write task file for AI tools',
+	'notice.ai_tasks_file_written': 'Task file written: {path}',
+	'notice.ai_tasks_file_failed': 'Could not write the task file, see console.',
 } as const;
 
 export type MessageKey = keyof typeof en;

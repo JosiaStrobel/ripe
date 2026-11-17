@@ -1,4 +1,5 @@
-import { debounce, getLanguage, Plugin, type TAbstractFile, type View } from 'obsidian';
+import { debounce, getLanguage, Notice, Plugin, type TAbstractFile, type View } from 'obsidian';
+import { TasksExportWriter } from './ai/tasks_export_writer';
 import { apply_color_scheme } from './color_scheme';
 import { set_language, t } from './i18n';
 import { today } from './parser/date';
@@ -27,6 +28,7 @@ export default class MainPlugin extends Plugin {
 		this.undo,
 		() => this.refresh_views(),
 	);
+	private readonly ai_tasks = new TasksExportWriter(this.app, this.store, () => this.settings);
 	private readonly refresh_views_debounced = debounce(() => this.refresh_views(), 300, true);
 
 	async onload(): Promise<void> {
@@ -74,6 +76,12 @@ export default class MainPlugin extends Plugin {
 		});
 		this.addCommand({ id: 'quick-add', name: t('command.quick_add'), callback: () => this.editor.quick() });
 		this.register_shopping();
+		this.addCommand({
+			id: 'write-ai-tasks-file',
+			name: t('command.write_ai_tasks_file'),
+			callback: () => void this.write_ai_tasks(),
+		});
+		this.ai_tasks.attach(this);
 
 		this.app.workspace.onLayoutReady(() => this.register_watchers());
 	}
@@ -111,9 +119,9 @@ export default class MainPlugin extends Plugin {
 	private register_watchers(): void {
 		const on_file = (file: TAbstractFile, old_path?: string): void => {
 			const paths = [this.store.path, this.shopping.store.path];
-			if (paths.includes(file.path) || (old_path !== undefined && paths.includes(old_path))) {
-				this.refresh_views_debounced();
-			}
+			const changed = (path: string): boolean => file.path === path || old_path === path;
+			if (paths.some(changed)) this.refresh_views_debounced();
+			if (changed(this.store.path)) this.ai_tasks.schedule();
 		};
 		this.registerEvent(this.app.vault.on('modify', (file) => on_file(file)));
 		this.registerEvent(this.app.vault.on('create', (file) => on_file(file)));
@@ -126,6 +134,7 @@ export default class MainPlugin extends Plugin {
 				if (today() === day) return;
 				day = today();
 				this.refresh_views();
+				this.ai_tasks.schedule();
 			}, DAY_CHECK_INTERVAL_MS),
 		);
 	}
@@ -142,6 +151,16 @@ export default class MainPlugin extends Plugin {
 		if (leaf.view.getViewType() !== type) await leaf.setViewState({ type, active: true });
 		await workspace.revealLeaf(leaf);
 		return leaf.view;
+	}
+
+	/** Write the AI task file now, even if the setting is off. */
+	private async write_ai_tasks(): Promise<void> {
+		try {
+			new Notice(t('notice.ai_tasks_file_written', { path: await this.ai_tasks.write() }));
+		} catch (error) {
+			console.error('Ripe: writing the AI task file failed', error);
+			new Notice(t('notice.ai_tasks_file_failed'));
+		}
 	}
 
 	/** Redraw all open overviews and shopping lists. */
@@ -168,5 +187,6 @@ export default class MainPlugin extends Plugin {
 		await this.saveData(this.settings);
 		apply_color_scheme(this.settings.colorScheme);
 		this.refresh_views();
+		this.ai_tasks.schedule();
 	}
 }

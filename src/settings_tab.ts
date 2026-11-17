@@ -1,4 +1,6 @@
 import { type App, PluginSettingTab, type SettingDefinitionItem } from 'obsidian';
+import { ai_folder_issue } from './ai/folder';
+import { TASKS_EXPORT_NAME } from './ai/tasks_export';
 import { t } from './i18n';
 import { moc_tree_api } from './integrations/moc_tree';
 import type MainPlugin from './main';
@@ -6,6 +8,7 @@ import { parse_duration } from './parser/duration';
 import {
 	CURVE_MAX,
 	CURVE_MIN,
+	DEFAULT_SETTINGS,
 	MATRIX_RANGE_MAX,
 	MATRIX_RANGE_MIN,
 	normalize_md_file,
@@ -124,7 +127,38 @@ export class SettingsTab extends PluginSettingTab {
 				desc: t('settings.time_slider.desc'),
 				control: { type: 'toggle', key: 'showTimeSlider' },
 			},
+			{
+				type: 'group',
+				heading: t('settings.group.ai'),
+				items: [
+					{
+						name: t('settings.ai_folder.name'),
+						desc: t('settings.ai_folder.desc'),
+						control: {
+							type: 'text',
+							key: 'aiFolder',
+							defaultValue: DEFAULT_SETTINGS.aiFolder,
+							placeholder: DEFAULT_SETTINGS.aiFolder,
+							validate: (value) => this.validate_ai_folder(value),
+						},
+					},
+					{
+						name: t('settings.ai_tasks_file.name'),
+						desc: t('settings.ai_tasks_file.desc'),
+						control: { type: 'toggle', key: 'aiTasksFile', defaultValue: DEFAULT_SETTINGS.aiTasksFile },
+					},
+				],
+			},
 		];
+	}
+
+	/** Error text for an unusable AI folder. */
+	private validate_ai_folder(value: string): string | undefined {
+		const { todoFile, shoppingFile } = this.plugin.settings;
+		const issue = ai_folder_issue(value, [TASKS_EXPORT_NAME], [todoFile, shoppingFile]);
+		if (issue === 'empty') return t('settings.ai_folder.invalid_empty');
+		if (issue === 'conflict') return t('settings.ai_folder.invalid_conflict');
+		return undefined;
 	}
 
 	getControlValue(key: string): unknown {

@@ -20,7 +20,7 @@ describe('parse_settings', () => {
 
 	it('migrates version 2 by adding the shopping file', () => {
 		const settings = parse_settings({ schemaVersion: 2, todoFile: 'A.md' });
-		expect(settings).toMatchObject({ todoFile: 'A.md', shoppingFile: 'Einkaufen.md', schemaVersion: 3 });
+		expect(settings).toMatchObject({ todoFile: 'A.md', shoppingFile: 'Einkaufen.md', schemaVersion: SETTINGS_SCHEMA_VERSION });
 		expect(parse_settings({ shoppingFile: 'Listen/Kauf' }).shoppingFile).toBe('Listen/Kauf.md');
 	});
 
@@ -38,6 +38,16 @@ describe('parse_settings', () => {
 	it('reads the color scheme', () => {
 		expect(parse_settings({ colorScheme: 'blue_red' }).colorScheme).toBe('blue_red');
 		expect(parse_settings({ colorScheme: 'rainbow' }).colorScheme).toBe('green_red');
+	});
+
+	it('migrates version 3 by adding the AI folder and cleans it', () => {
+		expect(parse_settings({ schemaVersion: 3 })).toMatchObject({ aiFolder: '.ai-context', aiTasksFile: false });
+		expect(parse_settings({ aiFolder: ' /Meta\\.ki/ ', aiTasksFile: true })).toMatchObject({
+			aiFolder: 'Meta/.ki',
+			aiTasksFile: true,
+		});
+		expect(parse_settings({ aiFolder: ' / ' }).aiFolder).toBe('.ai-context');
+		expect(parse_settings({ aiFolder: 3 }).aiFolder).toBe('.ai-context');
 	});
 
 	it('drops invalid values', () => {

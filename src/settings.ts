@@ -1,7 +1,8 @@
+import { clean_folder_path, DEFAULT_AI_FOLDER } from './ai/folder';
 import { parse_duration } from './parser/duration';
 
 /** Current version of the stored settings format. */
-export const SETTINGS_SCHEMA_VERSION = 3;
+export const SETTINGS_SCHEMA_VERSION = 4;
 
 /** Plugin settings as stored in data.json. */
 export interface PluginSettings {
@@ -24,6 +25,10 @@ export interface PluginSettings {
 	matrixRangeDays: number;
 	/** Test tool: slider in the overview to simulate other days. */
 	showTimeSlider: boolean;
+	/** Shared folder for generated AI helper files (one subfolder per plugin); never empty. */
+	aiFolder: string;
+	/** Keep `<aiFolder>/ripe/tasks.md` up to date for AI tools. */
+	aiTasksFile: boolean;
 }
 
 /** Available color gradients (CSS class `ripe-scheme-<name>`). */
@@ -46,6 +51,8 @@ export const DEFAULT_SETTINGS: Readonly<PluginSettings> = {
 	colorScheme: 'green_red',
 	matrixRangeDays: 14,
 	showTimeSlider: false,
+	aiFolder: DEFAULT_AI_FOLDER,
+	aiTasksFile: false,
 };
 
 export const MATRIX_RANGE_MIN = 3;
@@ -79,8 +86,8 @@ export function normalize_md_file(value: unknown): string | undefined {
 export function parse_settings(raw: unknown): PluginSettings {
 	const settings: PluginSettings = { ...DEFAULT_SETTINGS };
 	if (!is_record(raw)) return settings;
-	// Version 1 only had the template's example flag, version 3 added shoppingFile;
-	// missing values get their defaults, nothing else to migrate.
+	// Version 1 only had the template's example flag, version 3 added shoppingFile, version 4
+	// aiFolder and aiTasksFile; missing values get their defaults, nothing else to migrate.
 	settings.todoFile = normalize_md_file(raw.todoFile) ?? settings.todoFile;
 	settings.shoppingFile = normalize_md_file(raw.shoppingFile) ?? settings.shoppingFile;
 	const importance = number_in(raw.defaultImportance, 1, 3);
@@ -92,6 +99,10 @@ export function parse_settings(raw: unknown): PluginSettings {
 	const range = number_in(raw.matrixRangeDays, MATRIX_RANGE_MIN, MATRIX_RANGE_MAX);
 	if (range !== undefined && Number.isInteger(range)) settings.matrixRangeDays = range;
 	if (typeof raw.showTimeSlider === 'boolean') settings.showTimeSlider = raw.showTimeSlider;
+	if (typeof raw.aiFolder === 'string' && clean_folder_path(raw.aiFolder) !== '') {
+		settings.aiFolder = clean_folder_path(raw.aiFolder);
+	}
+	if (typeof raw.aiTasksFile === 'boolean') settings.aiTasksFile = raw.aiTasksFile;
 	settings.colorScheme = COLOR_SCHEMES.find((c) => c === raw.colorScheme) ?? settings.colorScheme;
 	settings.noteCreator = NOTE_CREATORS.find((c) => c === raw.noteCreator) ?? settings.noteCreator;
 	return settings;
