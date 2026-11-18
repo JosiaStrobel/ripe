@@ -3,6 +3,8 @@ import { t } from '../i18n';
 import type { TodoEntry, TodoError } from '../parser/todo';
 import { urgency_level, type HiddenInfo, type Urgency } from '../urgency';
 import { short_date } from './format';
+import { attach_tap_hold } from './hold_gesture';
+import { shatter } from './shatter';
 import type { TaskActions } from './task_actions';
 
 /** A task with its urgency; `hidden` is set for tasks that are not visible yet. */
@@ -35,22 +37,14 @@ export function render_task_block(parent: HTMLElement, row: TaskRow, actions: Ta
 	if (todo.note) setIcon(meta.createSpan({ cls: 'ripe-note-icon' }), 'file-text');
 	for (const error of todo.errors) meta.createDiv({ cls: 'ripe-error', text: error_text(error) });
 
-	const done = block.createEl('button', {
-		cls: 'ripe-done clickable-icon',
-		attr: { 'aria-label': t('action.done') },
-	});
-	setIcon(done, 'check');
-	done.addEventListener('click', (evt) => {
-		evt.stopPropagation();
-		void actions.complete(row.entry);
-	});
-
-	// "click" fires only for the primary button and taps; right click and long press
-	// go to "contextmenu" (Obsidian's onClickEvent would also react to auxclick).
-	block.addEventListener('click', (evt) => actions.click(row.entry, evt));
-	block.addEventListener('contextmenu', (evt) => {
-		evt.preventDefault();
-		actions.show_menu(row.entry, evt);
+	// Tap opens the menu, press and hold completes the task.
+	attach_tap_hold(block, {
+		tap: (evt) => actions.show_menu(row.entry, evt),
+		secondary: (evt) => actions.show_menu(row.entry, evt),
+		hold: () => {
+			shatter(block);
+			void actions.complete(row.entry);
+		},
 	});
 	return block;
 }

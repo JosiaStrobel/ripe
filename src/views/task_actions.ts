@@ -27,12 +27,6 @@ export class TaskActions {
 		private readonly on_change: () => Promise<void>,
 	) {}
 
-	/** Tap/click on a block: open the note if linked, else show the menu. */
-	click(entry: TodoEntry, evt: MouseEvent): void {
-		if (entry.todo.note) void this.open_note(entry.todo.note);
-		else this.show_menu(entry, evt);
-	}
-
 	/** Mark a task done (with undo). */
 	complete(entry: TodoEntry): Promise<void> {
 		const message = t('notice.done', { title: entry.todo.title });
@@ -59,7 +53,7 @@ export class TaskActions {
 		return this.apply(entry, unpause_line(entry.todo), message);
 	}
 
-	/** Action menu for a task (tap without note, long press, right click). */
+	/** Action menu for a task (tap, right click). */
 	show_menu(entry: TodoEntry, evt: MouseEvent): void {
 		const menu = new Menu();
 		menu.addItem((item) =>
@@ -103,6 +97,8 @@ export class TaskActions {
 				.setIcon('list')
 				.onClick(() => this.show_line(entry.line_no)),
 		);
+		menu.addSeparator();
+		menu.addItem((item) => item.setTitle(t('action.hold_hint')).setIcon('hand').setDisabled(true));
 		menu.showAtMouseEvent(evt);
 	}
 

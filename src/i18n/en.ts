@@ -11,6 +11,7 @@ const en = {
 	'action.skip': 'Skip',
 	'action.open_note': 'Open note',
 	'action.show_line': 'Show in todo file',
+	'action.hold_hint': 'Press and hold: done',
 	'error.missing_field': 'Missing field: {field}',
 	'error.invalid_value': 'Invalid value: {field}',
 	'error.conflicting_kinds': 'Fields of several task types',

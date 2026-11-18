@@ -13,6 +13,7 @@ const de: Messages = {
 	'action.skip': 'Überspringen',
 	'action.open_note': 'Notiz öffnen',
 	'action.show_line': 'In Todo-Datei zeigen',
+	'action.hold_hint': 'Lang drücken: erledigt',
 	'error.missing_field': 'Feld fehlt: {field}',
 	'error.invalid_value': 'Ungültiger Wert: {field}',
 	'error.conflicting_kinds': 'Felder mehrerer Aufgabentypen',

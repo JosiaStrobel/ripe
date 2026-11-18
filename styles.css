@@ -44,7 +44,7 @@
 
 .ripe-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
 	gap: var(--size-4-2);
 }
 
@@ -64,9 +64,11 @@
 	display: flex;
 	align-items: flex-start;
 	gap: var(--size-4-2);
-	min-height: 56px;
-	padding: var(--size-4-2) var(--size-4-2) var(--size-4-2) var(--size-4-3);
+	position: relative;
+	min-height: 48px;
+	padding: var(--size-4-2) var(--size-4-3);
 	border-radius: var(--radius-m);
+	-webkit-touch-callout: none;
 	background-color: color-mix(in srgb, rgb(var(--ripe-rgb)) var(--ripe-color-strength), var(--background-primary));
 	color: var(--ripe-text);
 	cursor: pointer;
@@ -123,12 +125,6 @@
 	font-weight: var(--font-bold);
 }
 
-.ripe-block .ripe-done {
-	--icon-color: var(--ripe-text);
-	--icon-color-hover: var(--ripe-text);
-	color: var(--ripe-text);
-}
-
 .ripe-note-icon {
 	display: inline-flex;
 	--icon-size: var(--icon-xs);
@@ -143,12 +139,70 @@
 	border-left-style: dashed;
 }
 
-/* Large touch target for the done button. */
-.ripe-done {
-	flex: none;
-	width: 40px;
-	height: 40px;
-	margin: calc(-1 * var(--size-2-2)) 0;
+/* Press and hold: a lighter layer grows from the center while held. */
+.ripe-block::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background-color: color-mix(in srgb, var(--ripe-text) 22%, transparent);
+	transform: scale(0);
+	opacity: 0;
+	transition: transform 120ms ease-out, opacity 120ms ease-out;
+	pointer-events: none;
+}
+
+.ripe-block.ripe-holding::after {
+	transform: scale(1);
+	opacity: 1;
+	transition: transform var(--ripe-hold-ms, 500ms) linear, opacity 80ms linear;
+}
+
+.ripe-block.ripe-shattered {
+	visibility: hidden;
+}
+
+/* Shards of a completed block, in a fixed overlay above everything. */
+.ripe-shatter {
+	position: fixed;
+	left: var(--ripe-left);
+	top: var(--ripe-top);
+	z-index: var(--layer-notice);
+	pointer-events: none;
+}
+
+.ripe-shard {
+	position: absolute;
+	left: var(--ripe-x);
+	top: var(--ripe-y);
+	width: var(--ripe-w);
+	height: var(--ripe-h);
+	border-radius: var(--radius-s);
+	background-color: var(--ripe-shard-bg);
+	animation: ripe-shard-fly var(--ripe-shatter-ms, 450ms) ease-out forwards;
+}
+
+@keyframes ripe-shard-fly {
+	to {
+		transform: translate(var(--ripe-dx), var(--ripe-dy)) rotate(var(--ripe-rot)) scale(0.6);
+		opacity: 0;
+	}
+}
+
+@keyframes ripe-shard-fade {
+	to {
+		opacity: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ripe-shard {
+		animation-name: ripe-shard-fade;
+	}
+
+	.ripe-block.ripe-holding::after {
+		transition: opacity var(--ripe-hold-ms, 500ms) linear;
+	}
 }
 
 /* Dialogs */
@@ -391,11 +445,6 @@
 
 .ripe-matrix-block .ripe-error {
 	display: none;
-}
-
-.ripe-matrix-block .ripe-done {
-	width: 32px;
-	height: 32px;
 }
 
 /* Test tool: time slider above the overview. */

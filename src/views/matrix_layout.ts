@@ -6,7 +6,7 @@ import type { TaskActions } from './task_actions';
 import { render_task_block, type TaskRow } from './task_block';
 
 /** Block width in the matrix (px); must match the CSS variable set below. */
-const BLOCK_WIDTH_PX = Platform.isPhone ? 110 : 150;
+const BLOCK_WIDTH_PX = Platform.isPhone ? 96 : 130;
 /** Fallback track width if the view is not laid out yet (px). */
 const FALLBACK_TRACK_PX = 600;
 
