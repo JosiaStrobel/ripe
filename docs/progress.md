@@ -36,5 +36,5 @@ _Aktueller Stand, kurz gehalten. Details erledigter Schritte und ältere Notizen
 
 - Beispiel-Datei `Todos.md` im Test-Vault `PluginDev` angelegt (alle Aufgabentypen + eine fehlerhafte Zeile).
 - Beispiel-Datei `Einkaufen.md` im Test-Vault angelegt.
-- Haken auf den Blöcken entfernt; Geste in `views/hold_gesture.ts`, Splitter in `views/shatter.ts` / `shards.ts`. Raster-Spalten min. 140 px (statt 180), Matrix-Blöcke 96/130 px. Auf PC und Android getestet.
+- Haken auf den Blöcken entfernt; Geste in `views/hold_gesture.ts`, Splitter in `views/shatter.ts` / `shards.ts`. Raster-Spalten min. 120 px (statt 180), Matrix-Blöcke 88/115 px; Titel: Silbentrennung (`hyphens: auto`, Obsidian-Sprache); ragt ein Wort trotzdem über (andere Sprache, Linux/Windows-Desktop ohne Wörterbuch), weiche Trennstriche (`views/title_hyphens.ts`, `hyphenate.ts`). Auf PC und Android getestet.
 - KI-Datei umgestellt: statt `tasks.md` mit berechnetem Stand jetzt `format.md` mit Formatbeschreibung (Schema 5); in Obsidian getestet.

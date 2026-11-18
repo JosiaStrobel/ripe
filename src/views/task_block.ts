@@ -5,6 +5,7 @@ import { urgency_level, type HiddenInfo, type Urgency } from '../urgency';
 import { short_date } from './format';
 import { attach_tap_hold } from './hold_gesture';
 import { shatter } from './shatter';
+import { render_title } from './title_hyphens';
 import type { TaskActions } from './task_actions';
 
 /** A task with its urgency; `hidden` is set for tasks that are not visible yet. */
@@ -25,7 +26,7 @@ export function render_task_block(parent: HTMLElement, row: TaskRow, actions: Ta
 	if (todo.errors.length > 0) block.addClass('ripe-invalid');
 
 	const body = block.createDiv({ cls: 'ripe-block-body' });
-	body.createDiv({ cls: 'ripe-block-title', text: todo.title || t('view.untitled') });
+	render_title(body, todo.title || t('view.untitled'));
 	const meta = body.createDiv({ cls: 'ripe-block-meta' });
 	if (row.hidden) {
 		const key = row.hidden.paused ? 'view.paused_until' : 'view.visible_from';
