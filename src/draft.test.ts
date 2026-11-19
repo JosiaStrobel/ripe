@@ -31,10 +31,19 @@ describe('new tasks', () => {
 	});
 
 	it('writes importance only if it differs from the default', () => {
-		const draft: TaskDraft = { title: 'X', kind: 'deadline', values: { due: '2026-12-01' }, importance: 3 };
+		const draft: TaskDraft = { title: 'X', kind: 'deadline', values: { due: '2026-12-01' }, importance: 3, start_level: 1 };
 		expect(apply_draft(null, draft, 2)).toBe('- [ ] X [fällig:: 2026-12-01] [wichtig:: 3]');
 		draft.importance = 2;
 		expect(apply_draft(null, draft, 2)).toBe('- [ ] X [fällig:: 2026-12-01]');
+	});
+
+	it('writes the start level only above 1 and removes it again', () => {
+		const draft: TaskDraft = { title: 'X', kind: 'none', values: {}, importance: 2, start_level: 3 };
+		const line = apply_draft(null, draft, 2);
+		expect(line).toBe('- [ ] X [startstufe:: 3]');
+		expect(draft_of(line).start_level).toBe(3);
+		draft.start_level = 1;
+		expect(apply_draft(line, draft, 2)).toBe('- [ ] X');
 	});
 
 	it('ignores values of other kinds', () => {
@@ -43,6 +52,7 @@ describe('new tasks', () => {
 			kind: 'none',
 			values: { due: '2026-12-01', every: '6d' },
 			importance: 2,
+			start_level: 1,
 		};
 		expect(apply_draft(null, draft, 2)).toBe('- [ ] X');
 	});
@@ -58,6 +68,7 @@ describe('editing', () => {
 			kind: 'deadline',
 			values: { due: '2026-12-01', lead: '3w' },
 			importance: 2,
+			start_level: 1,
 		});
 	});
 

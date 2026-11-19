@@ -1,7 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { parse_date } from './parser/date';
 import { parse_todo, type Todo } from './parser/todo';
-import { compare_urgency, compute_urgency, hidden_info, urgency_level, type Urgency } from './urgency';
+import {
+	compare_urgency,
+	compute_urgency,
+	hidden_info,
+	start_u,
+	urgency_in_window,
+	urgency_level,
+	type Urgency,
+} from './urgency';
 
 /** Parse a task line; fails the test if it is not one. */
 function todo(line: string): Todo {
@@ -162,5 +170,24 @@ describe('hidden_info', () => {
 	it('ignores done and visible tasks', () => {
 		expect(info('- [x] A [fällig:: 2026-12-10] [vorlauf:: 1w]', '2026-11-16')).toBeNull();
 		expect(info('- [ ] Irgendwas', '2026-11-16')).toBeNull();
+	});
+});
+
+describe('start level', () => {
+	const window = { start: 100, critical: 110 };
+	const linear = { curve_exponent: 1 };
+
+	it('lifts the first visible day to the level and rises to 1', () => {
+		expect(urgency_level(urgency_in_window(window, 100, linear, 2))).toBe(1);
+		expect(urgency_in_window(window, 105, linear, 3).u).toBeCloseTo(2 / 3 + 1 / 6);
+		expect(urgency_in_window(window, 100, linear, 4).u).toBe(1);
+		expect(urgency_in_window(window, 99, linear, 4).visible).toBe(false);
+	});
+
+	it('defaults to 1 and is read from the line', () => {
+		expect(start_u(1)).toBe(0);
+		const todo = parse_todo('- [ ] A [startstufe:: 3]', { default_importance: 2 });
+		expect(todo?.start_level).toBe(3);
+		expect(parse_todo('- [ ] A [startstufe:: 9]', { default_importance: 2 })?.errors).toHaveLength(1);
 	});
 });

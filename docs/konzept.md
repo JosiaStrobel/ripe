@@ -56,6 +56,7 @@ Sonderfälle (☑ festgelegt):
 - Zeile **ohne Zeitfelder**: immer sichtbar, u = 0.
 - `pausiert_bis`: ausgeblendet, solange heute < `pausiert_bis`.
 - `puffer` > `vorlauf`: start wird auf kritisch begrenzt.
+- ☑ **Startstufe** pro Aufgabe: `startstufe:: 1–4` (Standard 1, wird nur geschrieben, wenn > 1). Die Aufgabe erscheint gleich in dieser Farbstufe: `u = s + (1 − s) · u'` mit `s = (startstufe − 1) / 3` (Stufe 4 = sofort rot). Im Eingabe-Dialog als Auswahl „Startet bei“. In der Matrix verkürzt sie die Tage bis kritisch um denselben Anteil (`Tage · (1 − s)`), damit die Position zur Farbe passt; für solche Aufgaben ist die Achse dann nicht mehr exakt in Tagen.
 
 **Optional:** eine nichtlineare Kurve, etwa `u' = u^k` mit k > 1, sodass die Dringlichkeit erst langsam und dann schnell steigt. Das kann man global oder pro Aufgabe einstellen.
 

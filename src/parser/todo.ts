@@ -15,6 +15,7 @@ export const FIELD = {
 	created: 'erstellt',
 	critical_after: 'kritisch_nach',
 	importance: 'wichtig',
+	start_level: 'startstufe',
 	log: 'log',
 	paused_until: 'pausiert_bis',
 	done: 'erledigt',
@@ -53,6 +54,8 @@ export interface Todo {
 	/** Target of the log link, if any. */
 	log: string | null;
 	importance: number;
+	/** Color level 1 … 4 the task starts with when it appears (1 = lowest). */
+	start_level: number;
 	paused_until: Day | null;
 	done_on: Day | null;
 	/** Valid timing, or { kind: 'none' } if absent or invalid (see errors). */
@@ -64,6 +67,9 @@ export interface Todo {
 export interface ParseOptions {
 	default_importance: number;
 }
+
+/** Highest start level; equals the number of urgency color levels. */
+export const START_LEVEL_MAX = 4;
 
 const TASK = /^\s*[-*+]\s+\[(.)\]\s?(.*)$/;
 
@@ -121,6 +127,12 @@ class FieldReader {
 function parse_importance(text: string): number | null {
 	const value = Number(text.trim());
 	return Number.isInteger(value) && value >= 1 && value <= 3 ? value : null;
+}
+
+/** Parse a start level 1–4 (see URGENCY_LEVELS). */
+function parse_start_level(text: string): number | null {
+	const value = Number(text.trim());
+	return Number.isInteger(value) && value >= 1 && value <= START_LEVEL_MAX ? value : null;
 }
 
 /** Read the timing fields for a kind; null if a required field is missing or invalid. */
@@ -196,6 +208,7 @@ export function parse_todo(line: string, options: ParseOptions): Todo | null {
 		note,
 		log: log_field ? wiki_link_target(log_field.value) : null,
 		importance: r.optional(FIELD.importance, parse_importance) ?? options.default_importance,
+		start_level: r.optional(FIELD.start_level, parse_start_level) ?? 1,
 		paused_until: r.optional(FIELD.paused_until, parse_date),
 		done_on: r.optional(FIELD.done, parse_date),
 		timing,

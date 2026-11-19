@@ -47,7 +47,7 @@ export function render_matrix_layout(
 		const items = rows.filter((row) => row.entry.todo.importance === importance);
 		const width = BLOCK_WIDTH_PX / (track.clientWidth || FALLBACK_TRACK_PX);
 		const ideals = items.map((row) => {
-			const days = days_to_critical(row.urgency.window, options.today);
+			const days = days_to_critical(row.urgency.window, options.today, row.entry.todo.start_level);
 			return matrix_start(time_position(days, options.range_days), width);
 		});
 		const placements = place_blocks(ideals, width);

@@ -1,7 +1,7 @@
 import type { Day } from './parser/date';
 import { add_duration } from './parser/duration';
 import { next_occurrence } from './parser/schedule';
-import type { Todo, TodoTiming } from './parser/todo';
+import { START_LEVEL_MAX, type Todo, type TodoTiming } from './parser/todo';
 
 /** Time window of a task: visible from `start`, fully urgent from `critical`. */
 export interface UrgencyWindow {
@@ -71,16 +71,32 @@ export function compute_urgency(
 	if (todo.done) return HIDDEN;
 	if (todo.paused_until !== null && today < todo.paused_until) return HIDDEN;
 	const window = urgency_window(todo.timing, today);
-	return window ? urgency_in_window(window, today, options) : STATIC;
+	return window ? urgency_in_window(window, today, options, todo.start_level) : STATIC;
 }
 
-/** Urgency on `day` for a fixed window (used by the overview and the dialog preview). */
-export function urgency_in_window(window: UrgencyWindow, day: Day, options: UrgencyOptions): Urgency {
+/**
+ * Urgency on `day` for a fixed window (used by the overview and the dialog preview).
+ * `start_level` 1 … 4 lifts the urgency on the first visible day to that color level;
+ * the curve then runs from there to 1.
+ */
+export function urgency_in_window(
+	window: UrgencyWindow,
+	day: Day,
+	options: UrgencyOptions,
+	start_level = 1,
+): Urgency {
 	const { start, critical } = window;
 	if (day < start) return { ...HIDDEN, window };
 	if (day >= critical) return { visible: true, u: 1, overdue_days: day - critical, window };
-	const linear = (day - start) / (critical - start);
-	return { visible: true, u: linear ** Math.max(options.curve_exponent, 0.01), overdue_days: 0, window };
+	const base = start_u(start_level);
+	const curved = ((day - start) / (critical - start)) ** Math.max(options.curve_exponent, 0.01);
+	return { visible: true, u: base + (1 - base) * curved, overdue_days: 0, window };
+}
+
+/** Urgency at which a start level begins (1 → 0, 4 → 1). */
+export function start_u(start_level: number): number {
+	const level = Math.min(Math.max(start_level, 1), START_LEVEL_MAX);
+	return (level - 1) / (START_LEVEL_MAX - 1);
 }
 
 /** Number of color levels (green, yellow, orange, red). */

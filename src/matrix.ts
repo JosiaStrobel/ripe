@@ -1,5 +1,5 @@
 import type { Day } from './parser/date';
-import type { UrgencyWindow } from './urgency';
+import { start_u, type UrgencyWindow } from './urgency';
 
 /**
  * Layout math for the urgency/importance matrix. The horizontal axis is absolute time:
@@ -16,9 +16,17 @@ import type { UrgencyWindow } from './urgency';
 export const KNEE_FRACTION = 0.5;
 export const NEAR_SHARE = 0.6;
 
-/** Days until the critical day (0 if critical or overdue); null without window. */
-export function days_to_critical(window: UrgencyWindow | null, today: Day): number | null {
-	return window ? Math.max(0, window.critical - today) : null;
+/**
+ * Days until the critical day (0 if critical or overdue); null without window.
+ * A start level above 1 shortens them by its start urgency, so the block sits
+ * further left to match its color (level 4 → 0).
+ */
+export function days_to_critical(
+	window: UrgencyWindow | null,
+	today: Day,
+	start_level = 1,
+): number | null {
+	return window ? Math.max(0, window.critical - today) * (1 - start_u(start_level)) : null;
 }
 
 /**

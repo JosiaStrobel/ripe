@@ -21,6 +21,8 @@ export interface TaskDraft {
 	kind: TodoKind;
 	values: Partial<Record<DraftField, string>>;
 	importance: number;
+	/** Color level 1 … 4 the task starts with. */
+	start_level: number;
 }
 
 /** Timing fields the dialog edits. */
@@ -70,7 +72,7 @@ const NEW_TASK_PREFIX = '- [ ]';
 /** Empty draft for a new task. */
 export function empty_draft(kind: TodoKind, today: Day, importance: number): TaskDraft {
 	const values: TaskDraft['values'] = kind === 'aging' ? { created: format_date(today) } : {};
-	return { title: '', kind, values, importance };
+	return { title: '', kind, values, importance, start_level: 1 };
 }
 
 /** Kind of a line from its fields, also for invalid lines (first match wins). */
@@ -88,7 +90,13 @@ export function draft_from_line(line: string, default_importance: number): TaskD
 		const value = fields.get(FIELD[name]);
 		if (value !== undefined) values[name] = value;
 	}
-	return { title: todo.title, kind: detect_kind(fields), values, importance: todo.importance };
+	return {
+		title: todo.title,
+		kind: detect_kind(fields),
+		values,
+		importance: todo.importance,
+		start_level: todo.start_level,
+	};
 }
 
 /** Replace the title text of a task line; fields and wiki links stay, in their order. */
@@ -128,6 +136,8 @@ export function apply_draft(line: string | null, draft: TaskDraft, default_impor
 	if (had_importance || draft.importance !== default_importance) {
 		result = set_field(result, FIELD.importance, String(draft.importance));
 	}
+	// Level 1 is the fixed default, so the field is only written for higher levels.
+	result = put_field(result, FIELD.start_level, draft.start_level > 1 ? String(draft.start_level) : undefined);
 	return result;
 }
 

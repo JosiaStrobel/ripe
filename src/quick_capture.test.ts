@@ -17,6 +17,7 @@ describe('parse_quick', () => {
 				kind: 'aging',
 				values: { created: '2026-11-16', critical_after: '5d' },
 				importance: 2,
+				start_level: 1,
 			},
 			shortcut: true,
 		});

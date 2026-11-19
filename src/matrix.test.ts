@@ -13,6 +13,8 @@ describe('days_to_critical', () => {
 		expect(days_to_critical({ start: 0, critical: 10 }, 4)).toBe(6);
 		expect(days_to_critical({ start: 0, critical: 10 }, 12)).toBe(0);
 		expect(days_to_critical(null, 4)).toBeNull();
+		expect(days_to_critical({ start: 0, critical: 10 }, 4, 3)).toBeCloseTo(2);
+		expect(days_to_critical({ start: 0, critical: 10 }, 4, 4)).toBe(0);
 	});
 });
 

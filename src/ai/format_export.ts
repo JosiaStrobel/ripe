@@ -90,6 +90,8 @@ function render_todos(ctx: FormatExportContext): string[] {
 		'  (day of month, clamped to the month end). The next date counts from today, or from the day after',
 		`  ${FIELD.last_done} + ${FIELD.lead} if done, so completing within the lead counts for the coming date.`,
 		`- ${f(FIELD.importance)}: 1–3, default ${ctx.default_importance}; independent of urgency.`,
+		`- ${f(FIELD.start_level)}: 1–4, default 1; color level on the first visible day, urgency`,
+		'  then rises from there to critical.',
 		`- ${f(FIELD.paused_until)}: hidden before that date (snooze).`,
 		`- ${f(FIELD.log)}: link to a log note of a recurring task.`,
 		'- A `[[link]]` outside the fields points to a detail note with more content; all values stay in',

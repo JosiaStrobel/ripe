@@ -42,6 +42,7 @@ export function preview_days(
 	timing: TodoTiming,
 	today: Day,
 	options: UrgencyOptions,
+	start_level = 1,
 	range: PreviewRange = DEFAULT_PREVIEW_RANGE,
 ): Preview | null {
 	const effective: TodoTiming =
@@ -55,7 +56,7 @@ export function preview_days(
 	);
 	const days: PreviewDay[] = [];
 	for (let day = anchor - before; day <= anchor + range.after; day++) {
-		const urgency = urgency_in_window(window, day, options);
+		const urgency = urgency_in_window(window, day, options, start_level);
 		days.push({ day, level: urgency.visible ? urgency_level(urgency) : null });
 	}
 	return { window, anchor, days };

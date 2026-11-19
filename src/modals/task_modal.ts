@@ -20,7 +20,7 @@ import {
 } from '../draft';
 import { t, type MessageKey } from '../i18n';
 import { format_date, today } from '../parser/date';
-import type { TodoError } from '../parser/todo';
+import { START_LEVEL_MAX, type TodoError } from '../parser/todo';
 import { preview_days } from '../preview';
 import type { UrgencyOptions } from '../urgency';
 import { DurationInput } from './duration_input';
@@ -137,7 +137,7 @@ export class TaskModal extends Modal {
 		this.update_status();
 	}
 
-	/** Kind and importance side by side in two columns at the top. */
+	/** Kind, importance and start level side by side in columns at the top. */
 	private render_top_row(el: HTMLElement): void {
 		const row = el.createDiv({ cls: 'ripe-modal-top' });
 
@@ -161,6 +161,15 @@ export class TaskModal extends Modal {
 			})
 			.setValue(String(this.draft.importance))
 			.onChange((value) => (this.draft.importance = Number(value)));
+
+		const start = new DropdownComponent(labeled_column(row, t('modal.start_level')));
+		for (let level = 1; level <= START_LEVEL_MAX; level++) {
+			start.addOption(String(level), t(`start_level.${level}` as MessageKey));
+		}
+		start.setValue(String(this.draft.start_level)).onChange((value) => {
+			this.draft.start_level = Number(value);
+			this.update_preview();
+		});
 	}
 
 	/** One input row for a timing field. */
@@ -244,7 +253,8 @@ export class TaskModal extends Modal {
 		if (!this.preview_el) return;
 		const day = today();
 		const timing = draft_timing(this.draft, this.options.default_importance);
-		render_preview_strip(this.preview_el, preview_days(timing, day, this.options.urgency_options), day);
+		const preview = preview_days(timing, day, this.options.urgency_options, this.draft.start_level);
+		render_preview_strip(this.preview_el, preview, day);
 	}
 
 	/** Save the draft if valid and close. */
