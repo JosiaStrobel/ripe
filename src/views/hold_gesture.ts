@@ -2,6 +2,10 @@
 export const HOLD_MS = 500;
 /** Pointer movement that cancels a hold, e.g. when scrolling (px). */
 const MOVE_TOLERANCE_PX = 10;
+/** A "contextmenu" this soon after a touch press is a long press, not a right click (ms). */
+const TOUCH_CONTEXT_WINDOW_MS = 2000;
+/** Time of the last touch/pen press on any tap-hold element (shared across elements). */
+let last_touch_down_ms = 0;
 /** Class set while the element is being held. */
 const HOLDING_CLS = 'ripe-holding';
 
@@ -25,7 +29,9 @@ export function attach_tap_hold(el: HTMLElement, handlers: TapHoldHandlers): voi
 	let start_x = 0;
 	let start_y = 0;
 	let held = false;
-	let touch = false;
+	// Set on pointerdown on this element; a click without it began elsewhere, e.g. on a
+	// block that vanished after a hold and left this one under the finger.
+	let pressed = false;
 
 	const cancel = (): void => {
 		if (timer !== null) window.clearTimeout(timer);
@@ -34,9 +40,10 @@ export function attach_tap_hold(el: HTMLElement, handlers: TapHoldHandlers): voi
 	};
 
 	el.addEventListener('pointerdown', (evt) => {
-		touch = evt.pointerType !== 'mouse';
+		if (evt.pointerType !== 'mouse') last_touch_down_ms = Date.now();
 		if (evt.button !== 0) return;
 		held = false;
+		pressed = true;
 		start_x = evt.clientX;
 		start_y = evt.clientY;
 		el.addClass(HOLDING_CLS);
@@ -57,16 +64,22 @@ export function attach_tap_hold(el: HTMLElement, handlers: TapHoldHandlers): voi
 	// "click" fires only for the primary button and taps (not auxclick); after a hold
 	// the trailing click must not open the menu.
 	el.addEventListener('click', (evt) => {
+		const own_press = pressed;
+		pressed = false;
 		if (held) {
 			held = false;
 			evt.stopPropagation();
 			return;
 		}
+		// detail 0: keyboard activation, which has no pointerdown.
+		if (!own_press && evt.detail !== 0) return;
 		handlers.tap(evt);
 	});
-	// Touch long press also raises "contextmenu"; only a real right click opens the menu.
+	// Touch long press also raises "contextmenu", possibly on the block that moved under
+	// the finger after a hold; only a real right click opens the menu.
 	el.addEventListener('contextmenu', (evt) => {
 		evt.preventDefault();
-		if (!touch) handlers.secondary(evt);
+		if (Date.now() - last_touch_down_ms < TOUCH_CONTEXT_WINDOW_MS) return;
+		handlers.secondary(evt);
 	});
 }
