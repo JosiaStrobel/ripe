@@ -20,7 +20,8 @@ _Aktueller Stand, kurz gehalten. Details erledigter Schritte und ältere Notizen
 
 ## Nächste Schritte
 
-1. Etappe 5 (Logs); Rückgängig muss dann auch den Log-Eintrag entfernen.
+1. Startstufe in Obsidian und auf dem Tablet prüfen (Dialog mit 3 Auswahlfeldern auf dem Handy lesbar?).
+2. Etappe 5 (Logs); Rückgängig muss dann auch den Log-Eintrag entfernen.
 
 ## Offene Punkte und Ideen
 
@@ -32,11 +33,13 @@ _Aktueller Stand, kurz gehalten. Details erledigter Schritte und ältere Notizen
 - Symbolnamen unterscheiden sich zwischen Obsidian-Versionen (z. B. `grid-2x2` fehlt): Kandidatenliste mit `getIcon()` prüfen (`pick_icon` in `overview_view.ts`).
 - Klicks nur über `addEventListener('click')`, nicht `onClickEvent` (reagiert auch auf Rechtsklick via `auxclick`).
 
-## Notizen zur letzten Sitzung
+## Notizen zur letzten Sitzung (2026-11-19)
 
-- Fix: Nach Lang-Drücken öffnete der nachrutschende Block sein Menü (Klick landete auf ihm); `click` zählt nur noch nach eigenem `pointerdown`; `contextmenu` wird bis 2 s nach jedem Touch-Druck ignoriert (Android-Long-Press traf den nachgerutschten Block).
-- Matrix auf dem Handy: 30vh Platz unten zum Weiterscrollen.
-- Startstufe eingebaut (Konzept 3.1). Noch nicht in Obsidian/Android getestet.
+- Fix: Nach Lang-Drücken öffnete der nachgerutschte Block sein Menü; auf Android getestet, funktioniert (Details in `history.md`).
+- Matrix auf dem Handy: Platz unten zum Weiterscrollen.
+- Startstufe eingebaut (Konzept 3.1); Test in Obsidian/Android noch nicht bestätigt.
+
+## Notizen zur Sitzung davor
 
 - Beispiel-Datei `Todos.md` im Test-Vault `PluginDev` angelegt (alle Aufgabentypen + eine fehlerhafte Zeile).
 - Beispiel-Datei `Einkaufen.md` im Test-Vault angelegt.
